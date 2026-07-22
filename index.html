@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#5c4b3a" />
-  <title>Hoof Records 2.0</title>
+  <title>Hoof Records 2.1</title>
   <style>:root {
   /* Vetlife V2.8 colour theme */
   --light-brown: #a79075;
@@ -1145,7 +1145,7 @@ textarea {
         <div class="brand-mark">HR</div>
         <div>
           <h1>Hoof Records</h1>
-          <p id="headerSubtitle">Private lameness recording · 2.0</p>
+          <p id="headerSubtitle">Private lameness recording · 2.1</p>
         </div>
       </div>
 
@@ -1224,7 +1224,7 @@ textarea {
                 <h2>Affected foot</h2>
                 <span>Required</span>
               </div>
-              <div class="foot-grid" data-group="foot">
+              <div class="foot-grid" data-group="foot" data-multiple="true">
                 <button type="button" data-value="LF"><strong>LF</strong><span>Left front</span></button>
                 <button type="button" data-value="RF"><strong>RF</strong><span>Right front</span></button>
                 <button type="button" data-value="LH"><strong>LH</strong><span>Left hind</span></button>
@@ -1426,7 +1426,7 @@ textarea {
                 <tr>
                   <th>Cow</th>
                   <th>Score</th>
-                  <th>Foot</th>
+                  <th>Hoof/Hooves</th>
                   <th>Lesion</th>
                   <th>Treatment</th>
                   <th>Notes</th>
@@ -1464,7 +1464,7 @@ textarea {
                   <th>Mob</th>
                   <th>Cow</th>
                   <th>Score</th>
-                  <th>Foot</th>
+                  <th>Hoof/Hooves</th>
                   <th>Lesion</th>
                   <th>Treatment</th>
                 </tr>
@@ -1483,7 +1483,7 @@ textarea {
     </nav>
   </div>
 
-  <script>const APP_VERSION = "2.0";
+  <script>const APP_VERSION = "2.1";
 
 const KEYS = {
   records: "hoofRecordsV2Records",
@@ -1494,7 +1494,7 @@ const KEYS = {
 const state = {
   weather: "",
   severity: "",
-  foot: "",
+  foot: [],
   lesion: "",
   treatment: [],
   outcome: [],
@@ -1631,6 +1631,16 @@ function outcomeText(record) {
   return outcomeArray(record).join(" + ");
 }
 
+function footArray(record) {
+  return Array.isArray(record.foot)
+    ? record.foot
+    : (record.foot ? [record.foot] : []);
+}
+
+function footText(record) {
+  return footArray(record).join(" + ");
+}
+
 function makeSessionId() {
   return `session-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
@@ -1689,7 +1699,7 @@ function clearCowForm(focus = true) {
   byId("cowNumber").value = "";
   byId("notes").value = "";
   setSingleChoice("severity", "");
-  setSingleChoice("foot", "");
+  setMultiChoice("foot", []);
   setSingleChoice("lesion", "");
   setMultiChoice("treatment", []);
   setMultiChoice("outcome", []);
@@ -1744,7 +1754,7 @@ function saveCow() {
     weather: state.activeSession.weather,
     cow,
     severity: state.severity,
-    foot: state.foot,
+    foot: [...state.foot],
     lesion: state.lesion,
     treatment: [...state.treatment],
     nsaidDrug: state.treatment.includes("NSAID") ? chosenDrug("nsaid") : "",
@@ -1973,7 +1983,7 @@ function createFarmerReport() {
   const highSeverity = records.filter(record => Number(record.severity) >= 4).length;
   const treatmentCounts = countValues(records.flatMap(record => record.treatment || []));
   const lesionCounts = countValues(records.map(record => record.lesion));
-  const footCounts = countValues(records.map(record => record.foot));
+  const footCounts = countValues(records.flatMap(record => footArray(record)));
   const outcomeCounts = countValues(records.flatMap(record => Array.isArray(record.outcome) ? record.outcome : (record.outcome ? [record.outcome] : [])));
 
   const revisitRecords = records.filter(record => {
@@ -2026,7 +2036,7 @@ function createFarmerReport() {
         <tr>
           <td>${escapeHtml(record.cow)}</td>
           <td>${escapeHtml(record.severity)}</td>
-          <td>${escapeHtml(record.foot || "—")}</td>
+          <td>${escapeHtml(footText(record) || "—")}</td>
           <td>${escapeHtml(record.lesion || "—")}</td>
           <td>${escapeHtml((Array.isArray(record.outcome) ? record.outcome : (record.outcome ? [record.outcome] : [])).join(" + ") || "—")}</td>
           <td>${escapeHtml(record.notes || "—")}</td>
@@ -2037,7 +2047,7 @@ function createFarmerReport() {
     <tr>
       <td>${escapeHtml(record.cow)}</td>
       <td>${escapeHtml(record.severity)}</td>
-      <td>${escapeHtml(record.foot || "—")}</td>
+      <td>${escapeHtml(footText(record) || "—")}</td>
       <td>${escapeHtml(record.lesion || "—")}</td>
       <td>${escapeHtml((record.treatment || []).join(" + ") || "—")}</td>
       <td>${escapeHtml((Array.isArray(record.outcome) ? record.outcome : (record.outcome ? [record.outcome] : [])).join(" + ") || "—")}</td>
@@ -2283,7 +2293,7 @@ function createFarmerReport() {
     <section class="two-col avoid-break">
       <div>
         <h2>Affected feet</h2>
-        <table><thead><tr><th>Foot</th><th class="number">Cows</th></tr></thead>
+        <table><thead><tr><th>Hoof/Hooves</th><th class="number">Cows</th></tr></thead>
         <tbody>${breakdownRows(footCounts)}</tbody></table>
       </div>
       <div>
@@ -2296,7 +2306,7 @@ function createFarmerReport() {
     <section>
       <h2>Follow-up list</h2>
       <table>
-        <thead><tr><th>Cow</th><th>Severity</th><th>Foot</th><th>Lesion</th><th>Outcome(s)</th><th>Notes</th></tr></thead>
+        <thead><tr><th>Cow</th><th>Severity</th><th>Hoof/Hooves</th><th>Lesion</th><th>Outcome(s)</th><th>Notes</th></tr></thead>
         <tbody>${followUpRows}</tbody>
       </table>
     </section>
@@ -2312,7 +2322,7 @@ function createFarmerReport() {
     <section>
       <h2>Complete cow record</h2>
       <table>
-        <thead><tr><th>Cow</th><th>Severity</th><th>Foot</th><th>Lesion</th><th>Treatment</th><th>Outcome(s)</th><th>Notes</th></tr></thead>
+        <thead><tr><th>Cow</th><th>Severity</th><th>Hoof/Hooves</th><th>Lesion</th><th>Treatment</th><th>Outcome(s)</th><th>Notes</th></tr></thead>
         <tbody>${recordRows}</tbody>
       </table>
     </section>
@@ -2357,7 +2367,7 @@ function exportRecords(records, filename) {
 
   const headers = [
     "Date", "Time", "Farm", "Mob", "Operator", "Conditions",
-    "Cow Number", "Severity", "Foot", "Lesion", "Treatment",
+    "Cow Number", "Severity", "Hoof/Hooves", "Lesion", "Treatment",
     "NSAID Drug", "NSAID Milk WHP", "NSAID Milk Unit", "NSAID Meat WHP", "NSAID Meat Unit",
     "Antibiotic Drug", "Antibiotic Milk WHP", "Antibiotic Milk Unit", "Antibiotic Meat WHP", "Antibiotic Meat Unit",
     "Outcome(s)", "Notes"
@@ -2431,7 +2441,7 @@ function newSession() {
   localStorage.removeItem(KEYS.active);
   byId("farmInput").value = "";
   byId("mobInput").value = "";
-  byId("headerSubtitle").textContent = "Private lameness recording · 2.0";
+  byId("headerSubtitle").textContent = "Private lameness recording · 2.1";
   byId("lastSaved").textContent = "No cows saved this session.";
   clearCowForm(false);
   showScreen("startScreen");

@@ -1,9 +1,15 @@
-HOOF RECORDS 2.0 — GITHUB PAGES
+HOOF RECORDS 2.1 — MULTIPLE HOOF SELECTION
 
-Upload every file in this folder directly to the ROOT of the existing hoof-records repository.
-Do not put them inside another folder.
+New:
+- More than one hoof can be selected for the same cow.
+- Selected hooves are saved together.
+- Farmer Report, history and CSV export list all selected hooves.
+- Hoof breakdown counts each selected hoof.
+- Older records with one hoof remain compatible.
 
-Replace the existing files, commit the changes, wait for GitHub Pages to redeploy, then test:
+UPLOAD:
+Replace the files in the ROOT of your existing hoof-records GitHub repository with all files from this package.
+Commit the changes and wait for GitHub Pages to redeploy.
+
+App URL:
 https://petegallacherr.github.io/hoof-records/
-
-Use an Incognito tab first so the old cached version does not interfere.
