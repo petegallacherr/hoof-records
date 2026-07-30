@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#5c4b3a" />
-  <title>Hoof Records 2.1</title>
+  <title>Hoof Records 2.3</title>
   <style>:root {
   /* Vetlife V2.8 colour theme */
   --light-brown: #a79075;
@@ -1125,6 +1125,40 @@ textarea {
 
 .header-actions{display:flex;align-items:center;gap:10px}.install-button{min-height:44px;padding:10px 15px;border:1px solid rgba(255,255,255,.55);border-radius:12px;background:#fff;color:var(--dark-brown);font-weight:800;cursor:pointer}
 @media(max-width:640px){.header-actions{flex-direction:column;align-items:stretch;gap:7px}.install-button,.ghost-button{min-height:42px;padding:8px 10px;font-size:13px}}
+
+.hoof-plan-card{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--panel-soft);}
+.hoof-plan-card h3{margin:0;font-size:17px;color:var(--text);}
+.hoof-plan-note{margin:10px 0 12px;color:var(--muted);font-size:14px;}
+.hoof-plan-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.hoof-assignments-preview{margin-top:12px;}
+.hoof-assignments-preview.empty{color:var(--muted);font-size:14px;}
+.hoof-assignment-item{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;}
+.hoof-assignment-item + .hoof-assignment-item{margin-top:8px;}
+.hoof-assignment-item strong{display:block;margin-bottom:4px;color:var(--dark-brown);}
+.hoof-assignment-meta{color:var(--muted);font-size:13px;}
+.hoof-remove-btn{min-width:34px;min-height:34px;border:1px solid var(--line);border-radius:10px;background:var(--panel-soft);color:var(--dark-brown);font-weight:800;cursor:pointer;}
+@media (max-width:640px){.hoof-plan-actions{flex-direction:column;}.hoof-plan-actions .secondary-button{width:100%;}}
+
+.hoof-tabs button{position:relative;}
+.hoof-tabs button.has-details::after{
+  content:"✓";
+  position:absolute;
+  top:7px;
+  right:9px;
+  display:grid;
+  place-items:center;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:var(--dark-brown);
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+}
+.hoof-tabs button.selected.has-details::after{
+  background:#fff;
+  color:var(--dark-brown);
+}
 </style>
 
   <meta name="description" content="Offline hoof-trimming and lameness session records for phones and tablets.">
@@ -1145,7 +1179,7 @@ textarea {
         <div class="brand-mark">HR</div>
         <div>
           <h1>Hoof Records</h1>
-          <p id="headerSubtitle">Private lameness recording · 2.1</p>
+          <p id="headerSubtitle">Private lameness recording · 2.3</p>
         </div>
       </div>
 
@@ -1221,10 +1255,10 @@ textarea {
 
             <div class="section-block">
               <div class="section-heading">
-                <h2>Affected foot</h2>
-                <span>Required</span>
+                <h2>Hoof tabs</h2>
+                <span>Select one hoof at a time</span>
               </div>
-              <div class="foot-grid" data-group="foot" data-multiple="true">
+              <div class="foot-grid hoof-tabs" data-group="foot" data-multiple="true">
                 <button type="button" data-value="LF"><strong>LF</strong><span>Left front</span></button>
                 <button type="button" data-value="RF"><strong>RF</strong><span>Right front</span></button>
                 <button type="button" data-value="LH"><strong>LH</strong><span>Left hind</span></button>
@@ -1332,6 +1366,19 @@ textarea {
               <p class="withholding-note">
                 Withholding periods auto-fill for Metacam, Key 10%, Intra 300, and Depocillin. They can still be changed manually.
               </p>
+
+              <div class="hoof-plan-card">
+                <div class="section-heading">
+                  <h3 id="activeHoofHeading">Choose a hoof tab</h3>
+                  <span>Independent details per hoof</span>
+                </div>
+                <p class="hoof-plan-note">The lesion and treatment buttons apply only to the active hoof. Switch tabs to enter a different lesion or treatment for another hoof.</p>
+                <div class="hoof-plan-actions">
+                  <button id="clearActiveHoofBtn" type="button" class="secondary-button">Clear active hoof</button>
+                  <button id="clearHoofAssignmentsBtn" type="button" class="secondary-button">Clear all hooves</button>
+                </div>
+                <div id="hoofAssignmentsPreview" class="hoof-assignments-preview empty">No hoof details added yet.</div>
+              </div>
             </div>
 
             <div class="section-block">
@@ -1483,7 +1530,7 @@ textarea {
     </nav>
   </div>
 
-  <script>const APP_VERSION = "2.1";
+  <script>const APP_VERSION = "2.3";
 
 const KEYS = {
   records: "hoofRecordsV2Records",
@@ -1495,6 +1542,9 @@ const state = {
   weather: "",
   severity: "",
   foot: [],
+  activeFoot: "",
+  defaultTreatments: [],
+  hoofDetails: {},
   lesion: "",
   treatment: [],
   outcome: [],
@@ -1558,6 +1608,8 @@ document.querySelectorAll("[data-group]").forEach(group => {
   const name = group.dataset.group;
   const multiple = group.dataset.multiple === "true";
 
+  if (["foot", "lesion", "treatment"].includes(name)) return;
+
   group.querySelectorAll("button").forEach(button => {
     button.addEventListener("click", () => {
       const value = button.dataset.value;
@@ -1571,20 +1623,20 @@ document.querySelectorAll("[data-group]").forEach(group => {
       } else {
         setSingleChoice(name, value);
 
-        if (name === "severity" && ["3", "4", "5"].includes(value)) {
-          const automaticTreatments = [...state.treatment];
+        if (name === "severity") {
+          state.defaultTreatments = ["3", "4", "5"].includes(value)
+            ? ["Block", "NSAID"]
+            : [];
 
-          if (!automaticTreatments.includes("Block")) {
-            automaticTreatments.push("Block");
+          if (state.activeFoot && state.defaultTreatments.length) {
+            const detail = state.hoofDetails[state.activeFoot] || { lesion: "", treatment: [] };
+            detail.treatment = uniqueValues([...detail.treatment, ...state.defaultTreatments]);
+            state.hoofDetails[state.activeFoot] = detail;
+            setMultiChoice("treatment", detail.treatment);
+            renderHoofAssignments();
+            updateMedicinePanels();
+            showToast("Block and NSAID added to the active hoof");
           }
-
-          if (!automaticTreatments.includes("NSAID")) {
-            automaticTreatments.push("NSAID");
-          }
-
-          setMultiChoice("treatment", automaticTreatments);
-          updateMedicinePanels();
-          showToast("Block and NSAID selected automatically");
         }
       }
     });
@@ -1593,8 +1645,9 @@ document.querySelectorAll("[data-group]").forEach(group => {
 
 
 function updateMedicinePanels() {
-  const nsaid = state.treatment.includes("NSAID");
-  const antibiotic = state.treatment.includes("Antibiotic");
+  const activeTreatments = uniqueValues([...assignedTreatmentArray(), ...state.treatment]);
+  const nsaid = activeTreatments.includes("NSAID");
+  const antibiotic = activeTreatments.includes("Antibiotic");
   byId("nsaidDetails").classList.toggle("hidden", !nsaid);
   byId("antibioticDetails").classList.toggle("hidden", !antibiotic);
 }
@@ -1639,6 +1692,124 @@ function footArray(record) {
 
 function footText(record) {
   return footArray(record).join(" + ");
+}
+
+function uniqueValues(values) {
+  return [...new Set((values || []).filter(Boolean))];
+}
+
+function hoofDetailArray(record) {
+  if (Array.isArray(record?.hoofDetails)) {
+    return record.hoofDetails.filter(detail => detail && detail.foot).map(detail => ({
+      foot: detail.foot,
+      lesion: detail.lesion || "",
+      treatment: [...(detail.treatment || [])]
+    }));
+  }
+  if (record?.hoofDetails && typeof record.hoofDetails === "object") {
+    return Object.entries(record.hoofDetails).filter(([foot]) => !!foot).map(([foot, detail]) => ({
+      foot,
+      lesion: detail?.lesion || "",
+      treatment: [...(detail?.treatment || [])]
+    }));
+  }
+  const feet = footArray(record);
+  if (feet.length) {
+    return feet.map(foot => ({
+      foot,
+      lesion: record?.lesion || "",
+      treatment: [...(record?.treatment || [])]
+    }));
+  }
+  return [];
+}
+
+function hoofDetailsText(record) {
+  const details = hoofDetailArray(record);
+  if (!details.length) return "";
+  return details.map(detail => {
+    const treatmentText = (detail.treatment || []).join(" + ");
+    return `${detail.foot}: ${detail.lesion || "No lesion"}${treatmentText ? " · " + treatmentText : ""}`;
+  }).join("; ");
+}
+
+function assignedTreatmentArray() {
+  return uniqueValues(hoofDetailArray(state).flatMap(detail => detail.treatment || []));
+}
+
+function renderHoofAssignments() {
+  const preview = byId("hoofAssignmentsPreview");
+  if (!preview) return;
+
+  document.querySelectorAll('[data-group="foot"] button').forEach(button => {
+    const detail = state.hoofDetails[button.dataset.value];
+    const hasDetails = !!detail && (!!detail.lesion || (detail.treatment || []).length > 0);
+    button.classList.toggle("has-details", hasDetails);
+  });
+
+  byId("activeHoofHeading").textContent = state.activeFoot
+    ? `${state.activeFoot} hoof`
+    : "Choose a hoof tab";
+
+  const details = hoofDetailArray(state)
+    .filter(detail => detail.lesion || (detail.treatment || []).length);
+  if (!details.length) {
+    preview.className = "hoof-assignments-preview empty";
+    preview.textContent = "No hoof details added yet.";
+    return;
+  }
+  preview.className = "hoof-assignments-preview";
+  preview.innerHTML = details.map(detail => `
+    <div class="hoof-assignment-item">
+      <div>
+        <strong>${detail.foot}</strong>
+        <div>${detail.lesion || "No lesion selected"}</div>
+        <div class="hoof-assignment-meta">${(detail.treatment || []).join(" + ") || "No treatment selected"}</div>
+      </div>
+      <button type="button" class="hoof-remove-btn" data-remove-hoof="${detail.foot}" aria-label="Remove ${detail.foot}">×</button>
+    </div>
+  `).join("");
+}
+
+function ensureActiveHoofDetail() {
+  if (!state.activeFoot) return null;
+
+  if (!state.hoofDetails[state.activeFoot]) {
+    state.hoofDetails[state.activeFoot] = {
+      lesion: "",
+      treatment: [...state.defaultTreatments]
+    };
+  }
+
+  return state.hoofDetails[state.activeFoot];
+}
+
+function selectHoofTab(foot) {
+  state.activeFoot = foot;
+  state.foot = [foot];
+
+  const detail = ensureActiveHoofDetail();
+  setMultiChoice("foot", [foot]);
+  setSingleChoice("lesion", detail?.lesion || "");
+  setMultiChoice("treatment", detail?.treatment || []);
+  byId("activeHoofHeading").textContent = `${foot} hoof`;
+  updateMedicinePanels();
+  renderHoofAssignments();
+}
+
+function clearActiveHoof() {
+  if (!state.activeFoot) {
+    showToast("Select a hoof tab first.", true);
+    return;
+  }
+
+  const hoof = state.activeFoot;
+  delete state.hoofDetails[hoof];
+  setSingleChoice("lesion", "");
+  setMultiChoice("treatment", []);
+  updateMedicinePanels();
+  renderHoofAssignments();
+  showToast(`${hoof} cleared`);
 }
 
 function makeSessionId() {
@@ -1686,7 +1857,7 @@ function updateSessionHeader() {
     state.activeSession.weather || "Conditions not set"
   ];
   byId("sessionMeta").textContent = bits.join(" · ");
-  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · V3.1`;
+  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.3`;
   refreshSessionStats();
 }
 
@@ -1699,6 +1870,9 @@ function clearCowForm(focus = true) {
   byId("cowNumber").value = "";
   byId("notes").value = "";
   setSingleChoice("severity", "");
+  state.activeFoot = "";
+  state.defaultTreatments = [];
+  state.hoofDetails = {};
   setMultiChoice("foot", []);
   setSingleChoice("lesion", "");
   setMultiChoice("treatment", []);
@@ -1706,6 +1880,7 @@ function clearCowForm(focus = true) {
   clearMedicine("nsaid");
   clearMedicine("antibiotic");
   updateMedicinePanels();
+  renderHoofAssignments();
 
   if (focus) {
     setTimeout(() => {
@@ -1728,17 +1903,20 @@ function saveCow() {
   if (!state.activeSession) return;
 
   const cow = byId("cowNumber").value.trim();
+  const hoofDetails = hoofDetailArray(state)
+    .filter(detail => detail.lesion || (detail.treatment || []).length);
+  const allTreatments = uniqueValues(hoofDetails.flatMap(detail => detail.treatment || []));
 
-  if (!cow || !state.severity || !state.foot) {
-    showToast("Cow number, score and foot are required.", true);
+  if (!cow || !state.severity || !hoofDetails.length) {
+    showToast("Cow number, score and at least one completed hoof tab are required.", true);
     return;
   }
 
-  if (state.treatment.includes("NSAID") && !chosenDrug("nsaid")) {
+  if (allTreatments.includes("NSAID") && !chosenDrug("nsaid")) {
     showToast("Select or enter the NSAID drug.", true);
     return;
   }
-  if (state.treatment.includes("Antibiotic") && !chosenDrug("antibiotic")) {
+  if (allTreatments.includes("Antibiotic") && !chosenDrug("antibiotic")) {
     showToast("Select or enter the antibiotic drug.", true);
     return;
   }
@@ -1754,19 +1932,20 @@ function saveCow() {
     weather: state.activeSession.weather,
     cow,
     severity: state.severity,
-    foot: [...state.foot],
-    lesion: state.lesion,
-    treatment: [...state.treatment],
-    nsaidDrug: state.treatment.includes("NSAID") ? chosenDrug("nsaid") : "",
-    nsaidMilkWhp: state.treatment.includes("NSAID") ? byId("nsaidMilkWhp").value : "",
-    nsaidMilkUnit: state.treatment.includes("NSAID") ? byId("nsaidMilkUnit").value : "",
-    nsaidMeatWhp: state.treatment.includes("NSAID") ? byId("nsaidMeatWhp").value : "",
-    nsaidMeatUnit: state.treatment.includes("NSAID") ? byId("nsaidMeatUnit").value : "",
-    antibioticDrug: state.treatment.includes("Antibiotic") ? chosenDrug("antibiotic") : "",
-    antibioticMilkWhp: state.treatment.includes("Antibiotic") ? byId("antibioticMilkWhp").value : "",
-    antibioticMilkUnit: state.treatment.includes("Antibiotic") ? byId("antibioticMilkUnit").value : "",
-    antibioticMeatWhp: state.treatment.includes("Antibiotic") ? byId("antibioticMeatWhp").value : "",
-    antibioticMeatUnit: state.treatment.includes("Antibiotic") ? byId("antibioticMeatUnit").value : "",
+    foot: hoofDetails.map(detail => detail.foot),
+    hoofDetails,
+    lesion: uniqueValues(hoofDetails.map(detail => detail.lesion)).join(" + "),
+    treatment: allTreatments,
+    nsaidDrug: allTreatments.includes("NSAID") ? chosenDrug("nsaid") : "",
+    nsaidMilkWhp: allTreatments.includes("NSAID") ? byId("nsaidMilkWhp").value : "",
+    nsaidMilkUnit: allTreatments.includes("NSAID") ? byId("nsaidMilkUnit").value : "",
+    nsaidMeatWhp: allTreatments.includes("NSAID") ? byId("nsaidMeatWhp").value : "",
+    nsaidMeatUnit: allTreatments.includes("NSAID") ? byId("nsaidMeatUnit").value : "",
+    antibioticDrug: allTreatments.includes("Antibiotic") ? chosenDrug("antibiotic") : "",
+    antibioticMilkWhp: allTreatments.includes("Antibiotic") ? byId("antibioticMilkWhp").value : "",
+    antibioticMilkUnit: allTreatments.includes("Antibiotic") ? byId("antibioticMilkUnit").value : "",
+    antibioticMeatWhp: allTreatments.includes("Antibiotic") ? byId("antibioticMeatWhp").value : "",
+    antibioticMeatUnit: allTreatments.includes("Antibiotic") ? byId("antibioticMeatUnit").value : "",
     outcome: [...state.outcome],
     notes: byId("notes").value.trim()
   };
@@ -1777,8 +1956,8 @@ function saveCow() {
 
   state.lastSavedRecord = record;
   byId("lastSaved").textContent =
-    `Last saved: Cow ${record.cow} · Score ${record.severity} · ${record.foot}` +
-    `${record.lesion ? " · " + record.lesion : ""}`;
+    `Last saved: Cow ${record.cow} · Score ${record.severity} · ${footText(record)}` +
+    `${hoofDetailsText(record) ? " · " + hoofDetailsText(record) : ""}`;
 
   showToast(`Cow ${cow} saved`);
   clearCowForm(true);
@@ -1792,9 +1971,21 @@ function repeatLastTreatment() {
     return;
   }
 
-  setSingleChoice("lesion", last.lesion || "");
-  setMultiChoice("treatment", last.treatment || []);
+  state.activeFoot = "";
+  state.foot = [];
+  state.hoofDetails = {};
+  hoofDetailArray(last).forEach(detail => {
+    state.hoofDetails[detail.foot] = {
+      lesion: detail.lesion || "",
+      treatment: [...(detail.treatment || [])]
+    };
+  });
+
+  setMultiChoice("foot", []);
+  setSingleChoice("lesion", "");
+  setMultiChoice("treatment", []);
   setMultiChoice("outcome", Array.isArray(last.outcome) ? last.outcome : (last.outcome ? [last.outcome] : []));
+  renderHoofAssignments();
   updateMedicinePanels();
 
   if ((last.treatment || []).includes("NSAID")) {
@@ -1851,7 +2042,7 @@ function undoLastCow() {
     : null;
 
   byId("lastSaved").textContent = state.lastSavedRecord
-    ? `Last saved: Cow ${state.lastSavedRecord.cow} · Score ${state.lastSavedRecord.severity} · ${state.lastSavedRecord.foot}`
+    ? `Last saved: Cow ${state.lastSavedRecord.cow} · Score ${state.lastSavedRecord.severity} · ${footText(state.lastSavedRecord)}`
     : "No cows saved this session.";
 
   refreshSessionStats();
@@ -1911,7 +2102,7 @@ function renderSummary() {
     ? (records.reduce((sum, r) => sum + Number(r.severity), 0) / records.length).toFixed(1)
     : "–";
   byId("metricLesion").textContent = mostCommon(records.map(r => r.lesion));
-  byId("metricFoot").textContent = mostCommon(records.map(r => r.foot));
+  byId("metricFoot").textContent = mostCommon(records.flatMap(r => footArray(r)));
 
   const body = byId("summaryTableBody");
   body.innerHTML = "";
@@ -1926,8 +2117,8 @@ function renderSummary() {
     [
       r.cow,
       r.severity,
-      r.foot,
-      r.lesion || "—",
+      footText(r) || "—",
+      hoofDetailsText(r) || (r.lesion || "—"),
       (r.treatment || []).join(" + ") || "—",
       r.notes || "—"
     ].forEach(value => {
@@ -1982,7 +2173,7 @@ function createFarmerReport() {
 
   const highSeverity = records.filter(record => Number(record.severity) >= 4).length;
   const treatmentCounts = countValues(records.flatMap(record => record.treatment || []));
-  const lesionCounts = countValues(records.map(record => record.lesion));
+  const lesionCounts = countValues(records.flatMap(record => hoofDetailArray(record).map(detail => detail.lesion)));
   const footCounts = countValues(records.flatMap(record => footArray(record)));
   const outcomeCounts = countValues(records.flatMap(record => Array.isArray(record.outcome) ? record.outcome : (record.outcome ? [record.outcome] : [])));
 
@@ -2037,7 +2228,7 @@ function createFarmerReport() {
           <td>${escapeHtml(record.cow)}</td>
           <td>${escapeHtml(record.severity)}</td>
           <td>${escapeHtml(footText(record) || "—")}</td>
-          <td>${escapeHtml(record.lesion || "—")}</td>
+          <td>${escapeHtml(hoofDetailsText(record) || record.lesion || "—")}</td>
           <td>${escapeHtml((Array.isArray(record.outcome) ? record.outcome : (record.outcome ? [record.outcome] : [])).join(" + ") || "—")}</td>
           <td>${escapeHtml(record.notes || "—")}</td>
         </tr>`).join("")
@@ -2048,7 +2239,7 @@ function createFarmerReport() {
       <td>${escapeHtml(record.cow)}</td>
       <td>${escapeHtml(record.severity)}</td>
       <td>${escapeHtml(footText(record) || "—")}</td>
-      <td>${escapeHtml(record.lesion || "—")}</td>
+      <td>${escapeHtml(hoofDetailsText(record) || record.lesion || "—")}</td>
       <td>${escapeHtml((record.treatment || []).join(" + ") || "—")}</td>
       <td>${escapeHtml((Array.isArray(record.outcome) ? record.outcome : (record.outcome ? [record.outcome] : [])).join(" + ") || "—")}</td>
       <td>${escapeHtml(record.notes || "—")}</td>
@@ -2367,7 +2558,7 @@ function exportRecords(records, filename) {
 
   const headers = [
     "Date", "Time", "Farm", "Mob", "Operator", "Conditions",
-    "Cow Number", "Severity", "Hoof/Hooves", "Lesion", "Treatment",
+    "Cow Number", "Severity", "Hoof/Hooves", "Hoof Details", "Lesion", "Treatment",
     "NSAID Drug", "NSAID Milk WHP", "NSAID Milk Unit", "NSAID Meat WHP", "NSAID Meat Unit",
     "Antibiotic Drug", "Antibiotic Milk WHP", "Antibiotic Milk Unit", "Antibiotic Meat WHP", "Antibiotic Meat Unit",
     "Outcome(s)", "Notes"
@@ -2375,7 +2566,7 @@ function exportRecords(records, filename) {
 
   const rows = records.map(r => [
     r.date, r.time, r.farm, r.mob, r.operator, r.weather,
-    r.cow, r.severity, r.foot, r.lesion, (r.treatment || []).join(" + "),
+    r.cow, r.severity, footText(r), hoofDetailsText(r), r.lesion, (r.treatment || []).join(" + "),
     r.nsaidDrug || "", r.nsaidMilkWhp || "", r.nsaidMilkUnit || "", r.nsaidMeatWhp || "", r.nsaidMeatUnit || "",
     r.antibioticDrug || "", r.antibioticMilkWhp || "", r.antibioticMilkUnit || "", r.antibioticMeatWhp || "", r.antibioticMeatUnit || "",
     (Array.isArray(r.outcome) ? r.outcome : (r.outcome ? [r.outcome] : [])).join(" + "), r.notes
@@ -2403,8 +2594,8 @@ function renderHistory() {
     .slice()
     .reverse()
     .filter(r => [
-      r.date, r.farm, r.mob, r.cow, r.severity, r.foot,
-      r.lesion, (r.treatment || []).join(" "), r.notes
+      r.date, r.farm, r.mob, r.cow, r.severity, footText(r),
+      r.lesion, hoofDetailsText(r), (r.treatment || []).join(" "), r.notes
     ].join(" ").toLowerCase().includes(query));
 
   const body = byId("historyTableBody");
@@ -2423,8 +2614,8 @@ function renderHistory() {
       r.mob || "—",
       r.cow,
       r.severity,
-      r.foot,
-      r.lesion || "—",
+      footText(r) || "—",
+      hoofDetailsText(r) || (r.lesion || "—"),
       (r.treatment || []).join(" + ") || "—"
     ].forEach(value => {
       const td = document.createElement("td");
@@ -2441,11 +2632,48 @@ function newSession() {
   localStorage.removeItem(KEYS.active);
   byId("farmInput").value = "";
   byId("mobInput").value = "";
-  byId("headerSubtitle").textContent = "Private lameness recording · 2.1";
+  byId("headerSubtitle").textContent = "Private lameness recording · 2.3";
   byId("lastSaved").textContent = "No cows saved this session.";
   clearCowForm(false);
   showScreen("startScreen");
 }
+
+document.querySelectorAll('[data-group="foot"] button').forEach(button => {
+  button.addEventListener("click", () => selectHoofTab(button.dataset.value));
+});
+
+document.querySelectorAll('[data-group="lesion"] button').forEach(button => {
+  button.addEventListener("click", () => {
+    if (!state.activeFoot) {
+      showToast("Choose a hoof tab first.", true);
+      return;
+    }
+
+    const detail = ensureActiveHoofDetail();
+    detail.lesion = button.dataset.value;
+    setSingleChoice("lesion", detail.lesion);
+    renderHoofAssignments();
+  });
+});
+
+document.querySelectorAll('[data-group="treatment"] button').forEach(button => {
+  button.addEventListener("click", () => {
+    if (!state.activeFoot) {
+      showToast("Choose a hoof tab first.", true);
+      return;
+    }
+
+    const detail = ensureActiveHoofDetail();
+    const value = button.dataset.value;
+    detail.treatment = detail.treatment.includes(value)
+      ? detail.treatment.filter(item => item !== value)
+      : [...detail.treatment, value];
+
+    setMultiChoice("treatment", detail.treatment);
+    renderHoofAssignments();
+    updateMedicinePanels();
+  });
+});
 
 byId("startSessionBtn").addEventListener("click", startSession);
 byId("saveCowBtn").addEventListener("click", saveCow);
@@ -2455,6 +2683,36 @@ byId("undoBtn").addEventListener("click", undoLastCow);
 byId("finishSessionBtn").addEventListener("click", finishSession);
 byId("newSessionBtn").addEventListener("click", newSession);
 byId("farmerReportBtn").addEventListener("click", createFarmerReport);
+byId("clearActiveHoofBtn").addEventListener("click", clearActiveHoof);
+byId("clearHoofAssignmentsBtn").addEventListener("click", () => {
+  state.activeFoot = "";
+  state.foot = [];
+  state.hoofDetails = {};
+  setMultiChoice("foot", []);
+  setSingleChoice("lesion", "");
+  setMultiChoice("treatment", []);
+  renderHoofAssignments();
+  updateMedicinePanels();
+  showToast("All hoof details cleared");
+});
+byId("hoofAssignmentsPreview").addEventListener("click", event => {
+  const button = event.target.closest("[data-remove-hoof]");
+  if (!button) return;
+
+  const hoof = button.dataset.removeHoof;
+  delete state.hoofDetails[hoof];
+
+  if (state.activeFoot === hoof) {
+    state.activeFoot = "";
+    state.foot = [];
+    setMultiChoice("foot", []);
+    setSingleChoice("lesion", "");
+    setMultiChoice("treatment", []);
+  }
+
+  renderHoofAssignments();
+  updateMedicinePanels();
+});
 
 byId("exportCsvBtn").addEventListener("click", () => {
   if (!state.activeSession) return;
