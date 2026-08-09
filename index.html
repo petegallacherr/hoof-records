@@ -2461,7 +2461,6 @@ function createFarmerReport() {
       <div class="detail"><span>Farm</span><strong>${escapeHtml(session.farm || "—")}</strong></div>
       <div class="detail"><span>Mob</span><strong>${escapeHtml(session.mob || "—")}</strong></div>
       <div class="detail"><span>Operator</span><strong>${escapeHtml(session.operator || "—")}</strong></div>
-      <div class="detail"><span>Conditions</span><strong>${escapeHtml(session.weather || "—")}</strong></div>
       <div class="detail"><span>Session started</span><strong>${escapeHtml(new Date(session.startDateTime).toLocaleString())}</strong></div>
       <div class="detail"><span>Session completed</span><strong>${escapeHtml(session.endDateTime ? new Date(session.endDateTime).toLocaleString() : "Not recorded")}</strong></div>
     </section>
