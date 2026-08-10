@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#5c4b3a" />
-  <title>Hoof Records 2.3</title>
+  <title>Hoof Records 2.4</title>
   <style>:root {
   /* Vetlife V2.8 colour theme */
   --light-brown: #a79075;
@@ -1179,7 +1179,7 @@ textarea {
         <div class="brand-mark">HR</div>
         <div>
           <h1>Hoof Records</h1>
-          <p id="headerSubtitle">Private lameness recording · 2.3</p>
+          <p id="headerSubtitle">Private lameness recording · 2.4</p>
         </div>
       </div>
 
@@ -1276,9 +1276,9 @@ textarea {
                 <button type="button" data-value="5" class="score score-5">5</button>
               </div>
               <p class="auto-treatment-note">1 - Trim</p>
-              <p class="auto-treatment-note">2 - Mild - Footrot, I/D, ulcers</p>
-              <p class="auto-treatment-note">3 - Moderate - W/L, underrun sole</p>
-              <p class="auto-treatment-note">4 - Complex - Nerve block needed</p>
+              <p class="auto-treatment-note">2 - Mild</p>
+              <p class="auto-treatment-note">3 - Moderate</p>
+              <p class="auto-treatment-note">4 - Complex</p>
               <p class="auto-treatment-note">5 - Veterinary intervention</p>
               <p class="auto-treatment-note"><strong>Scores 3–5 will automatically select Block and NSAID. Either can be deselected or other treatments added if required.</strong></p>
             </div>
@@ -1310,7 +1310,7 @@ textarea {
                 <button type="button" data-value="Block">Block</button>
                 <button type="button" data-value="NSAID">NSAID</button>
                 <button type="button" data-value="Antibiotic">Antibiotic</button>
-                <button type="button" data-value="No">No trim required</button>
+                <button type="button" data-value="No">No</button>
                 <button type="button" data-value="Refil">Refil kit (CuSO4)</button>
                               </div>
 
@@ -1464,12 +1464,12 @@ textarea {
 
         <div class="summary-actions">
           <button id="farmerReportBtn" type="button" class="primary-xl">Farmer Report</button>
+          <button id="shareFarmerReportBtn" type="button" class="primary-xl">Email / Share Farmer Report</button>
           <button id="exportCsvBtn" type="button" class="secondary-button">Export CSV + Email</button>
           <button id="backToRecordsBtn" type="button" class="secondary-button">View records</button>
         </div>
         <p class="email-export-note">
-          Farmer Report opens a clean printable report. Choose <strong>Print / Save PDF</strong> to create a PDF.
-          The report records lesions and treatments given to individual animals only.
+          <strong>Farmer Report</strong> opens the printable preview. <strong>Email / Share Farmer Report</strong> creates a PDF and opens your phone or tablet share menu so it can be sent through Outlook, Gmail, Mail, or another compatible app.
         </p>
 
         <div class="summary-table-card">
@@ -1537,7 +1537,7 @@ textarea {
     </nav>
   </div>
 
-  <script>const APP_VERSION = "2.3";
+  <script>const APP_VERSION = "2.4";
 
 const KEYS = {
   records: "hoofRecordsV2Records",
@@ -1546,7 +1546,6 @@ const KEYS = {
 };
 
 const state = {
-  weather: "",
   severity: "",
   foot: [],
   activeFoot: "",
@@ -1846,7 +1845,6 @@ function startSession() {
     farm,
     mob,
     operator,
-    weather: state.weather,
     startDateTime: new Date().toISOString(),
     finished: false
   };
@@ -1867,11 +1865,10 @@ function updateSessionHeader() {
   byId("sessionFarm").textContent = state.activeSession.farm;
   const bits = [
     state.activeSession.mob || "No mob entered",
-    state.activeSession.operator || "No operator",
-    state.activeSession.weather || "Conditions not set"
+    state.activeSession.operator || "No operator"
   ];
   byId("sessionMeta").textContent = bits.join(" · ");
-  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.3`;
+  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.4`;
   refreshSessionStats();
 }
 
@@ -1943,7 +1940,6 @@ function saveCow() {
     farm: state.activeSession.farm,
     mob: state.activeSession.mob,
     operator: state.activeSession.operator,
-    weather: state.activeSession.weather,
     cow,
     severity: state.severity,
     foot: hoofDetails.map(detail => detail.foot),
@@ -2470,7 +2466,6 @@ function createFarmerReport() {
       <div class="detail"><span>Farm</span><strong>${escapeHtml(session.farm || "—")}</strong></div>
       <div class="detail"><span>Mob</span><strong>${escapeHtml(session.mob || "—")}</strong></div>
       <div class="detail"><span>Operator</span><strong>${escapeHtml(session.operator || "—")}</strong></div>
-      <div class="detail"><span>Conditions</span><strong>${escapeHtml(session.weather || "—")}</strong></div>
       <div class="detail"><span>Session started</span><strong>${escapeHtml(new Date(session.startDateTime).toLocaleString())}</strong></div>
       <div class="detail"><span>Session completed</span><strong>${escapeHtml(session.endDateTime ? new Date(session.endDateTime).toLocaleString() : "Not recorded")}</strong></div>
     </section>
@@ -2558,6 +2553,374 @@ function createFarmerReport() {
 }
 
 
+function pdfPlainText(value) {
+  return String(value ?? "")
+    .replace(/[–—]/g, "-")
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/[^\x20-\x7E]/g, "?");
+}
+
+function pdfEscapeText(value) {
+  return pdfPlainText(value)
+    .replace(/\\/g, "\\\\")
+    .replace(/\(/g, "\\(")
+    .replace(/\)/g, "\\)");
+}
+
+function wrapPdfText(value, maxChars = 88) {
+  const text = pdfPlainText(value).trim();
+  if (!text) return [""];
+
+  const words = text.split(/\s+/);
+  const lines = [];
+  let line = "";
+
+  words.forEach(word => {
+    if (!line) {
+      line = word;
+      return;
+    }
+    if ((line + " " + word).length <= maxChars) {
+      line += " " + word;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  });
+
+  if (line) lines.push(line);
+  return lines;
+}
+
+function buildFarmerReportPdfBlob() {
+  if (!state.activeSession) return null;
+
+  const records = currentSessionRecords();
+  if (!records.length) return null;
+
+  const session = state.activeSession;
+  const averageSeverity = (
+    records.reduce((sum, record) => sum + Number(record.severity || 0), 0) / records.length
+  ).toFixed(1);
+
+  const highSeverity = records.filter(record => Number(record.severity) >= 4).length;
+  const treatmentCounts = countValues(records.flatMap(record => record.treatment || []));
+  const lesionCounts = countValues(
+    records.flatMap(record => hoofDetailArray(record).map(detail => detail.lesion))
+  );
+  const footCounts = countValues(records.flatMap(record => footArray(record)));
+  const outcomeCounts = countValues(records.flatMap(record => outcomeArray(record)));
+
+  const revisitRecords = records.filter(record =>
+    outcomeArray(record).some(outcome =>
+      ["Revisit", "Arrange Vet Visit", "Claw Amp Candidate"].includes(outcome)
+    )
+  );
+
+  const medicines = [];
+  records.forEach(record => {
+    if (record.nsaidDrug) {
+      medicines.push(
+        `Cow ${record.cow} | NSAID: ${record.nsaidDrug} | Milk WHP: ${formatWithholding(record.nsaidMilkWhp, record.nsaidMilkUnit)} | Meat WHP: ${formatWithholding(record.nsaidMeatWhp, record.nsaidMeatUnit)}`
+      );
+    }
+    if (record.antibioticDrug) {
+      medicines.push(
+        `Cow ${record.cow} | Antibiotic: ${record.antibioticDrug} | Milk WHP: ${formatWithholding(record.antibioticMilkWhp, record.antibioticMilkUnit)} | Meat WHP: ${formatWithholding(record.antibioticMeatWhp, record.antibioticMeatUnit)}`
+      );
+    }
+  });
+
+  const pages = [[]];
+  let pageIndex = 0;
+  let y = 800;
+  const left = 42;
+  const bottom = 48;
+
+  const currentPage = () => pages[pageIndex];
+
+  function newPage() {
+    pages.push([]);
+    pageIndex += 1;
+    y = 800;
+  }
+
+  function ensureSpace(height) {
+    if (y - height < bottom) newPage();
+  }
+
+  function addText(value, size = 10, bold = false, x = left) {
+    ensureSpace(size + 7);
+    currentPage().push(
+      `BT /${bold ? "F2" : "F1"} ${size} Tf ${x} ${y} Td (${pdfEscapeText(value)}) Tj ET`
+    );
+    y -= size + 5;
+  }
+
+  function addWrapped(value, size = 9, bold = false, x = left, maxChars = 88) {
+    wrapPdfText(value, maxChars).forEach(line => addText(line, size, bold, x));
+  }
+
+  function addGap(amount) {
+    ensureSpace(amount);
+    y -= amount;
+  }
+
+  function addRule() {
+    ensureSpace(8);
+    currentPage().push(`0.55 w ${left} ${y} m 553 ${y} l S`);
+    y -= 8;
+  }
+
+  function addHeading(value) {
+    addGap(5);
+    addText(value, 13, true);
+    addRule();
+  }
+
+  function addBreakdown(title, entries) {
+    addHeading(title);
+    if (!entries.length) {
+      addText("None recorded", 9, false, left + 8);
+      return;
+    }
+    entries.forEach(([name, count]) => {
+      addText(`${name}: ${count}`, 9, false, left + 8);
+    });
+  }
+
+  addText("HOOF TRIMMING REPORT", 20, true);
+  addText("Session findings and treatment record", 11);
+  addRule();
+  addText(`Farm: ${session.farm || "-"}`, 11, true);
+  addText(`Mob: ${session.mob || "-"}`, 10);
+  addText(`Operator: ${session.operator || "-"}`, 10);
+  addText(`Session started: ${new Date(session.startDateTime).toLocaleString()}`, 9);
+  addText(
+    `Session completed: ${session.endDateTime ? new Date(session.endDateTime).toLocaleString() : "Not recorded"}`,
+    9
+  );
+  addGap(5);
+  addWrapped(
+    `Cows examined: ${records.length} | Average severity: ${averageSeverity} | Severity 4-5: ${highSeverity} | Follow-up cows: ${revisitRecords.length}`,
+    10,
+    true,
+    left,
+    82
+  );
+
+  addBreakdown("LESION BREAKDOWN", lesionCounts);
+  addBreakdown("TREATMENTS PROVIDED", treatmentCounts);
+  addBreakdown("AFFECTED FEET", footCounts);
+  addBreakdown("RECORDED OUTCOMES", outcomeCounts);
+
+  addHeading("FOLLOW-UP LIST");
+  if (!revisitRecords.length) {
+    addText(
+      "No revisit, veterinary visit, or claw amputation candidates recorded.",
+      9,
+      false,
+      left + 8
+    );
+  } else {
+    revisitRecords.forEach(record => {
+      addWrapped(
+        `Cow ${record.cow} | Severity ${record.severity} | ${footText(record) || "-"} | ${hoofDetailsText(record) || record.lesion || "-"} | ${outcomeText(record) || "-"}${record.notes ? " | Notes: " + record.notes : ""}`,
+        9,
+        false,
+        left + 8,
+        84
+      );
+      addGap(2);
+    });
+  }
+
+  addHeading("MEDICINES AND WITHHOLDING PERIODS");
+  if (!medicines.length) {
+    addText("No medicines recorded.", 9, false, left + 8);
+  } else {
+    medicines.forEach(item => addWrapped(item, 9, false, left + 8, 84));
+  }
+
+  addHeading("COMPLETE COW RECORD");
+  records.forEach(record => {
+    addWrapped(
+      `Cow ${record.cow} | Severity ${record.severity} | Hoof/Hooves: ${footText(record) || "-"}`,
+      9,
+      true,
+      left + 8,
+      84
+    );
+    addWrapped(
+      `Lesion: ${hoofDetailsText(record) || record.lesion || "-"}`,
+      9,
+      false,
+      left + 14,
+      82
+    );
+    addWrapped(
+      `Treatment: ${(record.treatment || []).join(" + ") || "-"} | Outcome: ${outcomeText(record) || "-"}`,
+      9,
+      false,
+      left + 14,
+      82
+    );
+    if (record.notes) {
+      addWrapped(`Notes: ${record.notes}`, 9, false, left + 14, 82);
+    }
+    addGap(4);
+  });
+
+  addHeading("IMPORTANT NOTE");
+  addWrapped(
+    "This report records the lesions and treatments entered during the hoof-trimming session. It does not include farm-management recommendations or results of a Hooflife investigation. Treatment and withholding information must be recorded and entered as per the farm's animal health plan. All treatments and cow identity details are recorded to the best of our abilities.",
+    8,
+    false,
+    left + 8,
+    92
+  );
+
+  const totalPages = pages.length;
+  pages.forEach((commands, index) => {
+    commands.push(
+      `BT /F1 8 Tf ${left} 24 Td (Generated by Hoof Records V${pdfEscapeText(APP_VERSION)} - Page ${index + 1} of ${totalPages}) Tj ET`
+    );
+  });
+
+  const objects = [];
+  objects[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+  objects[3] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>";
+  objects[4] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>";
+
+  const kids = [];
+  pages.forEach((commands, index) => {
+    const pageId = 5 + index * 2;
+    const contentId = pageId + 1;
+    kids.push(`${pageId} 0 R`);
+    const stream = commands.join("\n");
+
+    objects[pageId] =
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] ` +
+      `/Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> ` +
+      `/Contents ${contentId} 0 R >>`;
+
+    objects[contentId] =
+      `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`;
+  });
+
+  objects[2] =
+    `<< /Type /Pages /Kids [${kids.join(" ")}] /Count ${pages.length} >>`;
+
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  const maxId = objects.length - 1;
+
+  for (let id = 1; id <= maxId; id += 1) {
+    offsets[id] = pdf.length;
+    pdf += `${id} 0 obj\n${objects[id]}\nendobj\n`;
+  }
+
+  const xrefOffset = pdf.length;
+  pdf += `xref\n0 ${maxId + 1}\n`;
+  pdf += "0000000000 65535 f \n";
+
+  for (let id = 1; id <= maxId; id += 1) {
+    pdf += `${String(offsets[id]).padStart(10, "0")} 00000 n \n`;
+  }
+
+  pdf +=
+    `trailer\n<< /Size ${maxId + 1} /Root 1 0 R >>\n` +
+    `startxref\n${xrefOffset}\n%%EOF`;
+
+  return new Blob([pdf], { type: "application/pdf" });
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+async function shareFarmerReport() {
+  if (!state.activeSession) return;
+
+  const records = currentSessionRecords();
+  if (!records.length) {
+    alert("There are no cow records in this session.");
+    return;
+  }
+
+  const reportBlob = buildFarmerReportPdfBlob();
+  if (!reportBlob) return;
+
+  const farm = state.activeSession.farm || "Farm";
+  const mob = state.activeSession.mob || "";
+  const reportDate = new Date(state.activeSession.startDateTime)
+    .toISOString()
+    .slice(0, 10);
+
+  const safeFarm =
+    farm.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() ||
+    "farm";
+
+  const filename =
+    `hoof-trimming-report-${safeFarm}-${reportDate}.pdf`;
+
+  const file = new File([reportBlob], filename, {
+    type: "application/pdf"
+  });
+
+  const shareData = {
+    title: `Hoof Trimming Report - ${farm}`,
+    text: `Hoof trimming report for ${farm}${mob ? ", " + mob : ""}.`,
+    files: [file]
+  };
+
+  if (
+    navigator.share &&
+    navigator.canShare &&
+    navigator.canShare({ files: [file] })
+  ) {
+    try {
+      await navigator.share(shareData);
+      return;
+    } catch (error) {
+      if (error && error.name === "AbortError") return;
+      console.warn(
+        "Direct file sharing was unavailable; using fallback.",
+        error
+      );
+    }
+  }
+
+  downloadBlob(reportBlob, filename);
+
+  const subject =
+    `Hoof Trimming Report - ${farm} - ${reportDate}`;
+
+  const body = [
+    "Hi,",
+    "",
+    `Please find the hoof trimming report for ${farm}${mob ? ", " + mob : ""}, dated ${reportDate}.`,
+    "",
+    `Your device could not attach the PDF directly from the browser, so "${filename}" has been downloaded. Please attach it before sending.`,
+    "",
+    "Regards"
+  ].join("\n");
+
+  window.setTimeout(
+    () => openOutlookEmail(subject, body),
+    350
+  );
+}
+
+
 function openOutlookEmail(subjectText, bodyText) {
   const mailto =
     `mailto:?subject=${encodeURIComponent(subjectText)}&body=${encodeURIComponent(bodyText)}`;
@@ -2571,7 +2934,7 @@ function exportRecords(records, filename) {
   }
 
   const headers = [
-    "Date", "Time", "Farm", "Mob", "Operator", "Conditions",
+    "Date", "Time", "Farm", "Mob", "Operator",
     "Cow Number", "Severity", "Hoof/Hooves", "Hoof Details", "Lesion", "Treatment",
     "NSAID Drug", "NSAID Milk WHP", "NSAID Milk Unit", "NSAID Meat WHP", "NSAID Meat Unit",
     "Antibiotic Drug", "Antibiotic Milk WHP", "Antibiotic Milk Unit", "Antibiotic Meat WHP", "Antibiotic Meat Unit",
@@ -2579,7 +2942,7 @@ function exportRecords(records, filename) {
   ];
 
   const rows = records.map(r => [
-    r.date, r.time, r.farm, r.mob, r.operator, r.weather,
+    r.date, r.time, r.farm, r.mob, r.operator,
     r.cow, r.severity, footText(r), hoofDetailsText(r), r.lesion, (r.treatment || []).join(" + "),
     r.nsaidDrug || "", r.nsaidMilkWhp || "", r.nsaidMilkUnit || "", r.nsaidMeatWhp || "", r.nsaidMeatUnit || "",
     r.antibioticDrug || "", r.antibioticMilkWhp || "", r.antibioticMilkUnit || "", r.antibioticMeatWhp || "", r.antibioticMeatUnit || "",
@@ -2646,7 +3009,7 @@ function newSession() {
   localStorage.removeItem(KEYS.active);
   byId("farmInput").value = "";
   byId("mobInput").value = "";
-  byId("headerSubtitle").textContent = "Private lameness recording · 2.3";
+  byId("headerSubtitle").textContent = "Private lameness recording · 2.4";
   byId("lastSaved").textContent = "No cows saved this session.";
   clearCowForm(false);
   showScreen("startScreen");
@@ -2697,6 +3060,7 @@ byId("undoBtn").addEventListener("click", undoLastCow);
 byId("finishSessionBtn").addEventListener("click", finishSession);
 byId("newSessionBtn").addEventListener("click", newSession);
 byId("farmerReportBtn").addEventListener("click", createFarmerReport);
+byId("shareFarmerReportBtn").addEventListener("click", shareFarmerReport);
 byId("clearActiveHoofBtn").addEventListener("click", clearActiveHoof);
 byId("clearHoofAssignmentsBtn").addEventListener("click", () => {
   state.activeFoot = "";

@@ -1,16 +1,21 @@
-HOOF RECORDS 2.3 — CURRENT LAYOUT REPAIRED
+HOOF RECORDS 2.4 — EMAIL / SHARE FARMER REPORT + NO WEATHER
 
-This package uses the layout supplied by Peter as the current baseline.
+This version keeps the current repaired layout and independent hoof tabs.
 
-Repairs made:
-- Kept Quick Actions / Session Summary inside the right-hand record-layout column.
-- Closed the Treatment section correctly before Outcome.
-- Rear hoof codes now store and display LR / RR consistently (old LH / RH records still display correctly).
-- The visible "No" treatment now saves as "No" rather than "Bandage".
-- Most Common Lesion now counts lesions per hoof, not a combined cow-level lesion string.
+Changes:
+- Adds Email / Share Farmer Report.
+- On supported phones and tablets, the app creates a PDF in memory and opens the device Share menu with the PDF attached.
+- Choose Outlook, Gmail, Mail, or another compatible app to send the report.
+- If a browser/device does not support direct file sharing, the app falls back to downloading the PDF and opening an email draft.
+- Removes weather / conditions from sessions.
+- Removes weather / conditions from the Farmer Report.
+- Removes the Conditions column from CSV exports.
+- Keeps Farmer Report preview / Print / Save PDF as a separate option.
 
-The independent hoof-tab workflow is preserved. Each hoof keeps its own lesion and treatments.
+UPLOAD
+Upload every file in this ZIP directly into the root of the GitHub repository and replace the existing files.
 
-GITHUB PAGES UPLOAD
-Upload every file in this folder directly to the repository root and commit.
-No npm, package.json, or PowerShell build command is required.
+No npm, package.json, or Expo commands are required.
+
+App URL:
+https://petegallacherr.github.io/hoof-records/
