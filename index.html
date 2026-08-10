@@ -1009,12 +1009,1866 @@ textarea {
 </style>
 </head>
 <body>
+  }
 
+.choice-grid button {
+    min-height: 58px;
+    padding: 9px 7px;
+    font-size: 15px;
+  }
+
+  .side-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .side-card {
+    padding: 15px;
+  }
+
+  .sticky-actions {
+    width: 100%;
+    grid-template-columns: minmax(110px, 0.38fr) minmax(0, 0.62fr);
+    gap: 7px;
+    padding: 8px 8px max(8px, env(safe-area-inset-bottom));
+    border-left: 0;
+    border-right: 0;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .bottom-nav {
+    width: 100%;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 16px 16px 0 0;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .bottom-nav button {
+    min-height: 50px;
+    font-size: 13px;
+  }
+
+  .summary-table-card {
+    padding: 12px;
+  }
+
+  th,
+  td {
+    padding: 10px 8px;
+  }
+
+  .medicine-details {
+    background: var(--panel-soft);
+  }
+}
+
+/* Small phones */
+@media (max-width: 420px) {
+  .hero h2 {
+    font-size: 33px;
+  }
+
+  .score {
+    min-height: 60px;
+    font-size: 25px;
+  }
+
+  .choice-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .outcome-grid,
+  .withhold-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .unit-input {
+    grid-template-columns: minmax(0, 1fr) 92px;
+  }
+
+  .metric-grid {
+    gap: 8px;
+  }
+
+  .metric-card {
+    padding: 13px;
+  }
+
+  .metric-card span {
+    font-size: 12px;
+  }
+
+  .metric-card strong {
+    font-size: 21px;
+  }
+
+  .sticky-actions .secondary-button,
+  .sticky-actions .primary-xl {
+    font-size: 15px;
+  }
+}
+
+/* Tablet landscape with limited vertical height */
+@media (min-width: 900px) and (max-height: 700px) and (orientation: landscape) {
+  .app-header {
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+
+  .side-panel {
+    top: 76px;
+  }
+
+  .session-strip {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 11px;
+    padding-bottom: 11px;
+  }
+
+  .record-card {
+    padding-top: 16px;
+  }
+
+  .section-block {
+    margin-top: 20px;
+  }
+}
+
+
+.header-actions{display:flex;align-items:center;gap:10px}.install-button{min-height:44px;padding:10px 15px;border:1px solid rgba(255,255,255,.55);border-radius:12px;background:#fff;color:var(--dark-brown);font-weight:800;cursor:pointer}
+@media(max-width:640px){.header-actions{flex-direction:column;align-items:stretch;gap:7px}.install-button,.ghost-button{min-height:42px;padding:8px 10px;font-size:13px}}
+
+.hoof-plan-card{margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:16px;background:var(--panel-soft);}
+.hoof-plan-card h3{margin:0;font-size:17px;color:var(--text);}
+.hoof-plan-note{margin:10px 0 12px;color:var(--muted);font-size:14px;}
+.hoof-plan-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.hoof-assignments-preview{margin-top:12px;}
+.hoof-assignments-preview.empty{color:var(--muted);font-size:14px;}
+.hoof-assignment-item{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;}
+.hoof-assignment-item + .hoof-assignment-item{margin-top:8px;}
+.hoof-assignment-item strong{display:block;margin-bottom:4px;color:var(--dark-brown);}
+.hoof-assignment-meta{color:var(--muted);font-size:13px;}
+.hoof-remove-btn{min-width:34px;min-height:34px;border:1px solid var(--line);border-radius:10px;background:var(--panel-soft);color:var(--dark-brown);font-weight:800;cursor:pointer;}
+@media (max-width:640px){.hoof-plan-actions{flex-direction:column;}.hoof-plan-actions .secondary-button{width:100%;}}
+
+.hoof-tabs button{position:relative;}
+.hoof-tabs button.has-details::after{
+  content:"✓";
+  position:absolute;
+  top:7px;
+  right:9px;
+  display:grid;
+  place-items:center;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:var(--dark-brown);
+  color:#fff;
+  font-size:12px;
+  font-weight:900;
+}
+.hoof-tabs button.selected.has-details::after{
+  background:#fff;
+  color:var(--dark-brown);
+}
+</style>
+
+  <meta name="description" content="Offline hoof-trimming and lameness session records for phones and tablets.">
+  <meta name="application-name" content="Hoof Records">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hoof Records">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <div class="brand-block">
+        <div class="brand-mark">HR</div>
+        <div>
+          <h1>Hoof Records</h1>
+          <p id="headerSubtitle">Private lameness recording · 2.3</p>
+        </div>
+      </div>
+
+      <div class="header-actions"><button id="installAppBtn" class="install-button hidden" type="button">Install app</button><button id="finishSessionBtn" class="ghost-button hidden" type="button">Finish session</button></div>
+    </header>
+
+    <main>
+      <section id="startScreen" class="screen active">
+        <div class="start-wrap">
+          <div class="hero">
+            <span class="eyebrow">FIELD RECORDING</span>
+            <h2>Start a new session</h2>
+            <p>Set the farm and mob once, then record each cow using large touch controls.</p>
+          </div>
+
+          <div class="start-card">
+            <label for="farmInput">Farm</label>
+            <input id="farmInput" type="text" placeholder="Enter farm name" autocomplete="off" />
+
+            <label for="mobInput">Mob / Group</label>
+            <input id="mobInput" type="text" placeholder="Enter mob or group" autocomplete="off" />
+
+            <label for="operatorInput">Operator</label>
+            <input id="operatorInput" type="text" placeholder="Vet/Tech name" autocomplete="off" />
+
+            <button id="startSessionBtn" class="primary-xl" type="button">Start session</button>
+            <p class="privacy-note">Records stay on this device until you export or clear them.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="recordScreen" class="screen">
+        <div class="session-strip">
+          <div>
+            <span id="sessionFarm">Farm</span>
+            <small id="sessionMeta">Mob</small>
+          </div>
+          <div class="session-count">
+            <strong id="sessionCount">0</strong>
+            <span>recorded</span>
+          </div>
+        </div>
+
+        <div class="record-layout">
+          <section class="record-card">
+            <div class="cow-number-block">
+              <label for="cowNumber">Cow number</label>
+              <input
+                id="cowNumber"
+                type="tel"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                enterkeyhint="next"
+                autocomplete="off"
+                placeholder="Cow number"
+              />
+            </div>
+
+            <div class="section-block">
+              <div class="section-heading">
+                <h2>Hoof tabs</h2>
+                <span>Select and treat one hoof at a time</span>
+              </div>
+              <div class="foot-grid hoof-tabs" data-group="foot" data-multiple="true">
+                <button type="button" data-value="LF"><strong>LF</strong><span>Left front</span></button>
+                <button type="button" data-value="RF"><strong>RF</strong><span>Right front</span></button>
+                <button type="button" data-value="LH"><strong>LR</strong><span>Left rear</span></button>
+                <button type="button" data-value="RH"><strong>RR</strong><span>Right Rear</span></button>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-heading">
+                <h2>Lameness Severity</h2>
+                <span>Required</span>
+              </div>
+              <div class="score-grid" data-group="severity">
+                <button type="button" data-value="1" class="score score-1">1</button>
+                <button type="button" data-value="2" class="score score-2">2</button>
+                <button type="button" data-value="3" class="score score-3">3</button>
+                <button type="button" data-value="4" class="score score-4">4</button>
+                <button type="button" data-value="5" class="score score-5">5</button>
+              </div>
+              <p class="auto-treatment-note">1 - Trim.</p>
+              <p class="auto-treatment-note">2 - Mild.</p>
+              <p class="auto-treatment-note">3 - Moderate.</p>
+              <p class="auto-treatment-note">4 - Complex.</p>
+              <p class="auto-treatment-note">5 - Vet Intervention.</p>
+              <p class="auto-treatment-note"><strong>Scores 3–5 automatically select Block and NSAID. Either can be deselected or you can add extra blocks and other treatments if required.</strong></p
+            </div>
+
+            <div class="section-block">
+              <div class="section-heading">
+                <h2>Lesion</h2>
+                <span>Choose one</span>
+              </div>
+              <div class="choice-grid" data-group="lesion">
+                <button type="button" data-value="White line">White line</button>
+                <button type="button" data-value="Footrot">Footrot</button>
+                <button type="button" data-value="Sole ulcer">Sole ulcer</button>
+                <button type="button" data-value="Bruising">Bruising</button>
+                <button type="button" data-value="Interdigital hyperplasia">Interdigital hyperplasia</button>
+                <button type="button" data-value="Other">Overgrown</button>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-heading">
+                <h2>Treatment</h2>
+                <span>Select treatment</span>
+              </div>
+              <div class="choice-grid treatment-grid" data-group="treatment" data-multiple="true">
+                <button type="button" data-value="Trim">Trim</button>
+                <button type="button" data-value="Block">Block</button>
+                <button type="button" data-value="NSAID">NSAID</button>
+                <button type="button" data-value="Antibiotic">Antibiotic</button>
+                <button type="button" data-value="Bandage">Bandage</button>
+                              </div>
+
+              <div id="nsaidDetails" class="medicine-details hidden">
+                <h3>NSAID details</h3>
+                <label for="nsaidDrug">Drug</label>
+                <select id="nsaidDrug">
+                  <option value="">Select drug</option>
+                  <option value="Metacam">Metacam</option>
+                  <option value="Key 10%">Key 10%</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input id="nsaidOtherDrug" class="hidden" type="text" placeholder="Other NSAID name">
+
+                <div class="withhold-grid">
+                  <div>
+                    <label for="nsaidMilkWhp">Milk withholding</label>
+                    <div class="unit-input">
+                      <input id="nsaidMilkWhp" type="number" inputmode="decimal" min="0" step="0.5" placeholder="0">
+                      <select id="nsaidMilkUnit">
+                        <option value="hours">hours</option>
+                        <option value="days">days</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label for="nsaidMeatWhp">Meat withholding</label>
+                    <div class="unit-input">
+                      <input id="nsaidMeatWhp" type="number" inputmode="decimal" min="0" step="0.5" placeholder="0">
+                      <select id="nsaidMeatUnit">
+                        <option value="days">days</option>
+                        <option value="hours">hours</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="antibioticDetails" class="medicine-details hidden">
+                <h3>Antibiotic details</h3>
+                <label for="antibioticDrug">Drug</label>
+                <select id="antibioticDrug">
+                  <option value="">Select drug</option>
+                  <option value="Intracillin 300">Intra 300 (Intracillin 300)</option>
+                  <option value="Depocillin">Depocillin</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input id="antibioticOtherDrug" class="hidden" type="text" placeholder="Other antibiotic name">
+
+                <div class="withhold-grid">
+                  <div>
+                    <label for="antibioticMilkWhp">Milk withholding</label>
+                    <div class="unit-input">
+                      <input id="antibioticMilkWhp" type="number" inputmode="decimal" min="0" step="0.5" placeholder="0">
+                      <select id="antibioticMilkUnit">
+                        <option value="hours">hours</option>
+                        <option value="days">days</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label for="antibioticMeatWhp">Meat withholding</label>
+                    <div class="unit-input">
+                      <input id="antibioticMeatWhp" type="number" inputmode="decimal" min="0" step="0.5" placeholder="0">
+                      <select id="antibioticMeatUnit">
+                        <option value="days">days</option>
+                        <option value="hours">hours</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p class="withholding-note">
+                Withholding periods auto-fill for Metacam, Key 10%, Intra 300, and Depocillin. They can still be changed manually.
+              </p>
+
+              <div class="hoof-plan-card">
+                <div class="section-heading">
+                  <h3 id="activeHoofHeading">Choose a hoof tab</h3>
+                  <span>Independent details per hoof</span>
+                </div>
+                <p class="hoof-plan-note">The lesion and treatment buttons apply only to the active hoof. Switch tabs to enter a different lesion or treatment for another hoof.</p>
+                <div class="hoof-plan-actions">
+                  <button id="clearActiveHoofBtn" type="button" class="secondary-button">Clear active hoof</button>
+                  <button id="clearHoofAssignmentsBtn" type="button" class="secondary-button">Clear all hooves</button>
+                </div>
+                <div id="hoofAssignmentsPreview" class="hoof-assignments-preview empty">No hoof details added yet.</div>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-heading">
+                <h2>Outcome</h2>
+                <span>Select one or more</span>
+              </div>
+              <div class="choice-grid outcome-grid" data-group="outcome" data-multiple="true">
+                <button type="button" data-value="Revisit">Revisit</button>
+                <button type="button" data-value="Monitor">Monitor</button>
+                <button type="button" data-value="Claw Amp Candidate">Claw Amp Candidate</button>
+                <button type="button" data-value="Arrange Vet Visit">Arrange Vet Visit</button>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <label for="notes">Notes</label>
+              <textarea id="notes" rows="3" placeholder="Optional notes"></textarea>
+            </div>
+          </section>
+
+          <aside class="side-panel">
+            <div class="side-card">
+              <h3>Quick actions</h3>
+              <button id="repeatLastBtn" type="button" class="secondary-button">Use last treatment</button>
+              <button id="undoBtn" type="button" class="secondary-button">Undo last cow</button>
+              <div id="lastSaved" class="last-saved">No cows saved this session.</div>
+            </div>
+
+            <div class="side-card compact-summary">
+              <h3>Session summary</h3>
+              <div><span>Total</span><strong id="sideTotal">0</strong></div>
+              <div><span>Score 4–5</span><strong id="sideHigh">0</strong></div>
+              <div><span>Blocks</span><strong id="sideBlocks">0</strong></div>
+              <div><span>Rechecks</span><strong id="sideRechecks">0</strong></div>
+            </div>
+          </aside>
+        </div>
+
+        <div class="sticky-actions">
+          <button id="clearCowBtn" type="button" class="secondary-button">Clear cow</button>
+          <button id="saveCowBtn" type="button" class="primary-xl">Save + next cow</button>
+        </div>
+
+        <div id="toast" class="toast" aria-live="polite"></div>
+      </section>
+
+      <section id="summaryScreen" class="screen">
+        <div class="summary-header">
+          <div>
+            <span class="eyebrow">SESSION COMPLETE</span>
+            <h2 id="summaryTitle">Session summary</h2>
+            <p id="summarySub"></p>
+          </div>
+          <button id="newSessionBtn" type="button" class="secondary-button">New session</button>
+        </div>
+
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span>Total recorded</span>
+            <strong id="metricTotal">0</strong>
+          </article>
+          <article class="metric-card">
+            <span>Average score</span>
+            <strong id="metricAverage">–</strong>
+          </article>
+          <article class="metric-card">
+            <span>Most common lesion</span>
+            <strong id="metricLesion">–</strong>
+          </article>
+          <article class="metric-card">
+            <span>Most affected foot</span>
+            <strong id="metricFoot">–</strong>
+          </article>
+        </div>
+
+        <div class="summary-actions">
+          <button id="farmerReportBtn" type="button" class="primary-xl">Farmer Report</button>
+          <button id="exportCsvBtn" type="button" class="secondary-button">Export CSV + Email</button>
+          <button id="backToRecordsBtn" type="button" class="secondary-button">View records</button>
+        </div>
+        <p class="email-export-note">
+          Farmer Report opens a clean printable report. Choose <strong>Print / Save PDF</strong> to create a PDF.
+          The report records findings and treatments only; management recommendations remain part of the paid Hooflife service.
+        </p>
+
+        <div class="summary-table-card">
+          <h3>Session records</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cow</th>
+                  <th>Score</th>
+                  <th>Hoof/Hooves</th>
+                  <th>Lesion</th>
+                  <th>Treatment</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="summaryTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="historyScreen" class="screen">
+        <div class="summary-header">
+          <div>
+            <span class="eyebrow">SAVED ON THIS DEVICE</span>
+            <h2>Record history</h2>
+            <p>Search previous entries by farm, mob, cow, lesion, foot, or treatment.</p>
+          </div>
+          <button id="historyBackBtn" type="button" class="secondary-button">Back</button>
+        </div>
+
+        <div class="history-toolbar">
+          <input id="historySearch" type="search" placeholder="Search records" />
+          <button id="exportAllBtn" type="button" class="secondary-button">Export All CSV + Email</button>
+          <button id="clearAllBtn" type="button" class="danger-button">Clear all</button>
+        </div>
+
+        <div class="summary-table-card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Farm</th>
+                  <th>Mob</th>
+                  <th>Cow</th>
+                  <th>Score</th>
+                  <th>Hoof/Hooves</th>
+                  <th>Lesion</th>
+                  <th>Treatment</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav id="bottomNav" class="bottom-nav hidden">
+      <button type="button" data-nav="recordScreen" class="active">Record</button>
+      <button type="button" data-nav="summaryScreen">Summary</button>
+      <button type="button" data-nav="historyScreen">History</button>
+    </nav>
+  </div>
+
+  <script>const APP_VERSION = "2.3";
+
+const KEYS = {
+  records: "hoofRecordsV2Records",
+  sessions: "hoofRecordsV2Sessions",
+  active: "hoofRecordsV2ActiveSession"
+};
+
+const state = {
+  weather: "",
+  severity: "",
+  foot: [],
+  activeFoot: "",
+  defaultTreatments: [],
+  hoofDetails: {},
+  lesion: "",
+  treatment: [],
+  outcome: [],
+  activeSession: null,
+  lastSavedRecord: null
+};
+
+const byId = id => document.getElementById(id);
+
+function loadJSON(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveJSON(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function allRecords() {
+  return loadJSON(KEYS.records, []);
+}
+
+function allSessions() {
+  return loadJSON(KEYS.sessions, []);
+}
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  byId(id).classList.add("active");
+
+  document.querySelectorAll("[data-nav]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.nav === id);
+  });
+
+  const inSession = !!state.activeSession;
+  byId("bottomNav").classList.toggle("hidden", !inSession || id === "recordScreen");
+  byId("finishSessionBtn").classList.toggle("hidden", !inSession || id !== "recordScreen");
+
+  if (id === "summaryScreen") renderSummary();
+  if (id === "historyScreen") renderHistory();
+}
+
+function setSingleChoice(groupName, value) {
+  state[groupName] = value;
+  document.querySelectorAll(`[data-group="${groupName}"] button`).forEach(btn => {
+    btn.classList.toggle("selected", btn.dataset.value === value);
+  });
+}
+
+function setMultiChoice(groupName, values) {
+  state[groupName] = [...values];
+  document.querySelectorAll(`[data-group="${groupName}"] button`).forEach(btn => {
+    btn.classList.toggle("selected", values.includes(btn.dataset.value));
+  });
+}
+
+document.querySelectorAll("[data-group]").forEach(group => {
+  const name = group.dataset.group;
+  const multiple = group.dataset.multiple === "true";
+
+  if (["foot", "lesion", "treatment"].includes(name)) return;
+
+  group.querySelectorAll("button").forEach(button => {
+    button.addEventListener("click", () => {
+      const value = button.dataset.value;
+
+      if (multiple) {
+        const next = state[name].includes(value)
+          ? state[name].filter(item => item !== value)
+          : [...state[name], value];
+        setMultiChoice(name, next);
+        if (name === "treatment") updateMedicinePanels();
+      } else {
+        setSingleChoice(name, value);
+
+        if (name === "severity") {
+          state.defaultTreatments = ["3", "4", "5"].includes(value)
+            ? ["Block", "NSAID"]
+            : [];
+
+          if (state.activeFoot && state.defaultTreatments.length) {
+            const detail = state.hoofDetails[state.activeFoot] || { lesion: "", treatment: [] };
+            detail.treatment = uniqueValues([...detail.treatment, ...state.defaultTreatments]);
+            state.hoofDetails[state.activeFoot] = detail;
+            setMultiChoice("treatment", detail.treatment);
+            renderHoofAssignments();
+            updateMedicinePanels();
+            showToast("Block and NSAID added to the active hoof");
+          }
+        }
+      }
+    });
+  });
+});
+
+
+function updateMedicinePanels() {
+  const activeTreatments = uniqueValues([...assignedTreatmentArray(), ...state.treatment]);
+  const nsaid = activeTreatments.includes("NSAID");
+  const antibiotic = activeTreatments.includes("Antibiotic");
+  byId("nsaidDetails").classList.toggle("hidden", !nsaid);
+  byId("antibioticDetails").classList.toggle("hidden", !antibiotic);
+}
+
+function chosenDrug(prefix) {
+  const selected = byId(prefix + "Drug").value;
+  return selected === "Other" ? byId(prefix + "OtherDrug").value.trim() : selected;
+}
+
+function clearMedicine(prefix) {
+  byId(prefix + "Drug").value = "";
+  byId(prefix + "OtherDrug").value = "";
+  byId(prefix + "OtherDrug").classList.add("hidden");
+  byId(prefix + "MilkWhp").value = "";
+  byId(prefix + "MeatWhp").value = "";
+  byId(prefix + "MilkUnit").value = "hours";
+  byId(prefix + "MeatUnit").value = "days";
+}
+
+function medicineText(r) {
+  const bits = [];
+  if (r.nsaidDrug) bits.push(r.nsaidDrug);
+  if (r.antibioticDrug) bits.push(r.antibioticDrug);
+  return bits.join(" + ");
+}
+
+function outcomeArray(record) {
+  return Array.isArray(record.outcome)
+    ? record.outcome
+    : (record.outcome ? [record.outcome] : []);
+}
+
+function outcomeText(record) {
+  return outcomeArray(record).join(" + ");
+}
+
+function footArray(record) {
+  return Array.isArray(record.foot)
+    ? record.foot
+    : (record.foot ? [record.foot] : []);
+}
+
+function footText(record) {
+  return footArray(record).join(" + ");
+}
+
+function uniqueValues(values) {
+  return [...new Set((values || []).filter(Boolean))];
+}
+
+function hoofDetailArray(record) {
+  if (Array.isArray(record?.hoofDetails)) {
+    return record.hoofDetails.filter(detail => detail && detail.foot).map(detail => ({
+      foot: detail.foot,
+      lesion: detail.lesion || "",
+      treatment: [...(detail.treatment || [])]
+    }));
+  }
+  if (record?.hoofDetails && typeof record.hoofDetails === "object") {
+    return Object.entries(record.hoofDetails).filter(([foot]) => !!foot).map(([foot, detail]) => ({
+      foot,
+      lesion: detail?.lesion || "",
+      treatment: [...(detail?.treatment || [])]
+    }));
+  }
+  const feet = footArray(record);
+  if (feet.length) {
+    return feet.map(foot => ({
+      foot,
+      lesion: record?.lesion || "",
+      treatment: [...(record?.treatment || [])]
+    }));
+  }
+  return [];
+}
+
+function hoofDetailsText(record) {
+  const details = hoofDetailArray(record);
+  if (!details.length) return "";
+  return details.map(detail => {
+    const treatmentText = (detail.treatment || []).join(" + ");
+    return `${detail.foot}: ${detail.lesion || "No lesion"}${treatmentText ? " · " + treatmentText : ""}`;
+  }).join("; ");
+}
+
+function assignedTreatmentArray() {
+  return uniqueValues(hoofDetailArray(state).flatMap(detail => detail.treatment || []));
+}
+
+function renderHoofAssignments() {
+  const preview = byId("hoofAssignmentsPreview");
+  if (!preview) return;
+
+  document.querySelectorAll('[data-group="foot"] button').forEach(button => {
+    const detail = state.hoofDetails[button.dataset.value];
+    const hasDetails = !!detail && (!!detail.lesion || (detail.treatment || []).length > 0);
+    button.classList.toggle("has-details", hasDetails);
+  });
+
+  byId("activeHoofHeading").textContent = state.activeFoot
+    ? `${state.activeFoot} hoof`
+    : "Choose a hoof tab";
+
+  const details = hoofDetailArray(state)
+    .filter(detail => detail.lesion || (detail.treatment || []).length);
+  if (!details.length) {
+    preview.className = "hoof-assignments-preview empty";
+    preview.textContent = "No hoof details added yet.";
+    return;
+  }
+  preview.className = "hoof-assignments-preview";
+  preview.innerHTML = details.map(detail => `
+    <div class="hoof-assignment-item">
+      <div>
+        <strong>${detail.foot}</strong>
+        <div>${detail.lesion || "No lesion selected"}</div>
+        <div class="hoof-assignment-meta">${(detail.treatment || []).join(" + ") || "No treatment selected"}</div>
+      </div>
+      <button type="button" class="hoof-remove-btn" data-remove-hoof="${detail.foot}" aria-label="Remove ${detail.foot}">×</button>
+    </div>
+  `).join("");
+}
+
+function ensureActiveHoofDetail() {
+  if (!state.activeFoot) return null;
+
+  if (!state.hoofDetails[state.activeFoot]) {
+    state.hoofDetails[state.activeFoot] = {
+      lesion: "",
+      treatment: [...state.defaultTreatments]
+    };
+  }
+
+  return state.hoofDetails[state.activeFoot];
+}
+
+function selectHoofTab(foot) {
+  state.activeFoot = foot;
+  state.foot = [foot];
+
+  const detail = ensureActiveHoofDetail();
+  setMultiChoice("foot", [foot]);
+  setSingleChoice("lesion", detail?.lesion || "");
+  setMultiChoice("treatment", detail?.treatment || []);
+  byId("activeHoofHeading").textContent = `${foot} hoof`;
+  updateMedicinePanels();
+  renderHoofAssignments();
+}
+
+function clearActiveHoof() {
+  if (!state.activeFoot) {
+    showToast("Select a hoof tab first.", true);
+    return;
+  }
+
+  const hoof = state.activeFoot;
+  delete state.hoofDetails[hoof];
+  setSingleChoice("lesion", "");
+  setMultiChoice("treatment", []);
+  updateMedicinePanels();
+  renderHoofAssignments();
+  showToast(`${hoof} cleared`);
+}
+
+function makeSessionId() {
+  return `session-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function startSession() {
+  const farm = byId("farmInput").value.trim();
+  const mob = byId("mobInput").value.trim();
+  const operator = byId("operatorInput").value.trim();
+
+  if (!farm) {
+    alert("Enter the farm name.");
+    byId("farmInput").focus();
+    return;
+  }
+
+  state.activeSession = {
+    id: makeSessionId(),
+    farm,
+    mob,
+    operator,
+    weather: state.weather,
+    startDateTime: new Date().toISOString(),
+    finished: false
+  };
+
+  saveJSON(KEYS.active, state.activeSession);
+
+  const sessions = allSessions();
+  sessions.push(state.activeSession);
+  saveJSON(KEYS.sessions, sessions);
+
+  updateSessionHeader();
+  showScreen("recordScreen");
+  setTimeout(() => byId("cowNumber").focus(), 200);
+}
+
+function updateSessionHeader() {
+  if (!state.activeSession) return;
+  byId("sessionFarm").textContent = state.activeSession.farm;
+  const bits = [
+    state.activeSession.mob || "No mob entered",
+    state.activeSession.operator || "No operator",
+    state.activeSession.weather || "Conditions not set"
+  ];
+  byId("sessionMeta").textContent = bits.join(" · ");
+  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.3`;
+  refreshSessionStats();
+}
+
+function currentSessionRecords() {
+  if (!state.activeSession) return [];
+  return allRecords().filter(r => r.sessionId === state.activeSession.id);
+}
+
+function clearCowForm(focus = true) {
+  byId("cowNumber").value = "";
+  byId("notes").value = "";
+  setSingleChoice("severity", "");
+  state.activeFoot = "";
+  state.defaultTreatments = [];
+  state.hoofDetails = {};
+  setMultiChoice("foot", []);
+  setSingleChoice("lesion", "");
+  setMultiChoice("treatment", []);
+  setMultiChoice("outcome", []);
+  clearMedicine("nsaid");
+  clearMedicine("antibiotic");
+  updateMedicinePanels();
+  renderHoofAssignments();
+
+  if (focus) {
+    setTimeout(() => {
+      byId("cowNumber").focus();
+      byId("cowNumber").click();
+    }, 150);
+  }
+}
+
+function showToast(message, isError = false) {
+  const toast = byId("toast");
+  toast.textContent = message;
+  toast.classList.toggle("error", isError);
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
+}
+
+function saveCow() {
+  if (!state.activeSession) return;
+
+  const cow = byId("cowNumber").value.trim();
+  const hoofDetails = hoofDetailArray(state)
+    .filter(detail => detail.lesion || (detail.treatment || []).length);
+  const allTreatments = uniqueValues(hoofDetails.flatMap(detail => detail.treatment || []));
+
+  if (!cow || !state.severity || !hoofDetails.length) {
+    showToast("Cow number, score and at least one completed hoof tab are required.", true);
+    return;
+  }
+
+  if (allTreatments.includes("NSAID") && !chosenDrug("nsaid")) {
+    showToast("Select or enter the NSAID drug.", true);
+    return;
+  }
+  if (allTreatments.includes("Antibiotic") && !chosenDrug("antibiotic")) {
+    showToast("Select or enter the antibiotic drug.", true);
+    return;
+  }
+
+  const record = {
+    id: `record-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    sessionId: state.activeSession.id,
+    date: new Date().toISOString().slice(0, 10),
+    time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    farm: state.activeSession.farm,
+    mob: state.activeSession.mob,
+    operator: state.activeSession.operator,
+    weather: state.activeSession.weather,
+    cow,
+    severity: state.severity,
+    foot: hoofDetails.map(detail => detail.foot),
+    hoofDetails,
+    lesion: uniqueValues(hoofDetails.map(detail => detail.lesion)).join(" + "),
+    treatment: allTreatments,
+    nsaidDrug: allTreatments.includes("NSAID") ? chosenDrug("nsaid") : "",
+    nsaidMilkWhp: allTreatments.includes("NSAID") ? byId("nsaidMilkWhp").value : "",
+    nsaidMilkUnit: allTreatments.includes("NSAID") ? byId("nsaidMilkUnit").value : "",
+    nsaidMeatWhp: allTreatments.includes("NSAID") ? byId("nsaidMeatWhp").value : "",
+    nsaidMeatUnit: allTreatments.includes("NSAID") ? byId("nsaidMeatUnit").value : "",
+    antibioticDrug: allTreatments.includes("Antibiotic") ? chosenDrug("antibiotic") : "",
+    antibioticMilkWhp: allTreatments.includes("Antibiotic") ? byId("antibioticMilkWhp").value : "",
+    antibioticMilkUnit: allTreatments.includes("Antibiotic") ? byId("antibioticMilkUnit").value : "",
+    antibioticMeatWhp: allTreatments.includes("Antibiotic") ? byId("antibioticMeatWhp").value : "",
+    antibioticMeatUnit: allTreatments.includes("Antibiotic") ? byId("antibioticMeatUnit").value : "",
+    outcome: [...state.outcome],
+    notes: byId("notes").value.trim()
+  };
+
+  const records = allRecords();
+  records.push(record);
+  saveJSON(KEYS.records, records);
+
+  state.lastSavedRecord = record;
+  byId("lastSaved").textContent =
+    `Last saved: Cow ${record.cow} · Score ${record.severity} · ${footText(record)}` +
+    `${hoofDetailsText(record) ? " · " + hoofDetailsText(record) : ""}`;
+
+  showToast(`Cow ${cow} saved`);
+  clearCowForm(true);
+  refreshSessionStats();
+}
+
+function repeatLastTreatment() {
+  const last = state.lastSavedRecord || currentSessionRecords().slice(-1)[0];
+  if (!last) {
+    showToast("No previous cow to repeat.", true);
+    return;
+  }
+
+  state.activeFoot = "";
+  state.foot = [];
+  state.hoofDetails = {};
+  hoofDetailArray(last).forEach(detail => {
+    state.hoofDetails[detail.foot] = {
+      lesion: detail.lesion || "",
+      treatment: [...(detail.treatment || [])]
+    };
+  });
+
+  setMultiChoice("foot", []);
+  setSingleChoice("lesion", "");
+  setMultiChoice("treatment", []);
+  setMultiChoice("outcome", Array.isArray(last.outcome) ? last.outcome : (last.outcome ? [last.outcome] : []));
+  renderHoofAssignments();
+  updateMedicinePanels();
+
+  if ((last.treatment || []).includes("NSAID")) {
+    const known = ["Metacam", "Key 10%"].includes(last.nsaidDrug);
+    byId("nsaidDrug").value = known ? last.nsaidDrug : (last.nsaidDrug ? "Other" : "");
+    byId("nsaidOtherDrug").value = known ? "" : (last.nsaidDrug || "");
+    byId("nsaidOtherDrug").classList.toggle("hidden", known || !last.nsaidDrug);
+    byId("nsaidMilkWhp").value = last.nsaidMilkWhp || "";
+    byId("nsaidMilkUnit").value = last.nsaidMilkUnit || "hours";
+    byId("nsaidMeatWhp").value = last.nsaidMeatWhp || "";
+    byId("nsaidMeatUnit").value = last.nsaidMeatUnit || "days";
+  }
+
+  if ((last.treatment || []).includes("Antibiotic")) {
+    const known = ["Intracillin 300", "Depocillin"].includes(last.antibioticDrug);
+    byId("antibioticDrug").value = known ? last.antibioticDrug : (last.antibioticDrug ? "Other" : "");
+    byId("antibioticOtherDrug").value = known ? "" : (last.antibioticDrug || "");
+    byId("antibioticOtherDrug").classList.toggle("hidden", known || !last.antibioticDrug);
+    byId("antibioticMilkWhp").value = last.antibioticMilkWhp || "";
+    byId("antibioticMilkUnit").value = last.antibioticMilkUnit || "hours";
+    byId("antibioticMeatWhp").value = last.antibioticMeatWhp || "";
+    byId("antibioticMeatUnit").value = last.antibioticMeatUnit || "days";
+  }
+
+  showToast("Last treatment details copied");
+}
+
+function undoLastCow() {
+  const sessionRecords = currentSessionRecords();
+
+  if (!sessionRecords.length) {
+    showToast("No cow to undo.", true);
+    return;
+    min-height: 62px;
+}
+
+  const last = sessionRecords[sessionRecords.length - 1];
+
+  if (!confirm(`Remove Cow ${last.cow}, the last saved cow?`)) return;
+
+  const records = allRecords();
+  const lastIndex = records.findIndex(record => record.id === last.id);
+
+  if (lastIndex === -1) {
+    showToast("The last cow could not be found in records.", true);
+    return;
+  .choice-grid button {
+    min-height: 62px;
+}
+
+  records.splice(lastIndex, 1);
+  saveJSON(KEYS.records, records);
+
+  const remaining = currentSessionRecords();
+  state.lastSavedRecord = remaining.length
+    ? remaining[remaining.length - 1]
+    : null;
+
+  byId("lastSaved").textContent = state.lastSavedRecord
+    ? `Last saved: Cow ${state.lastSavedRecord.cow} · Score ${state.lastSavedRecord.severity} · ${footText(state.lastSavedRecord)}`
+    : "No cows saved this session.";
+
+  refreshSessionStats();
+  renderSummary();
+  renderHistory();
+
+  showToast(`Cow ${last.cow} removed from records`);
+}
+
+function refreshSessionStats() {
+  const records = currentSessionRecords();
+  byId("sessionCount").textContent = records.length;
+  byId("sideTotal").textContent = records.length;
+  byId("sideHigh").textContent = records.filter(r => Number(r.severity) >= 4).length;
+  byId("sideBlocks").textContent = records.filter(r => (r.treatment || []).includes("Block")).length;
+  byId("sideRechecks").textContent = records.filter(r => (Array.isArray(r.outcome) ? r.outcome : [r.outcome]).includes("Revisit")).length;
+}
+
+function finishSession() {
+  if (!state.activeSession) return;
+  const records = currentSessionRecords();
+
+  if (!records.length && !confirm("Finish this session without any cow records?")) return;
+
+  state.activeSession.finished = true;
+  state.activeSession.endDateTime = new Date().toISOString();
+
+  saveJSON(KEYS.active, state.activeSession);
+
+  const sessions = allSessions().map(s =>
+    s.id === state.activeSession.id ? state.activeSession : s
+  );
+  saveJSON(KEYS.sessions, sessions);
+
+  showScreen("summaryScreen");
+}
+
+function mostCommon(values) {
+  const counts = {};
+  values.filter(Boolean).forEach(v => counts[v] = (counts[v] || 0) + 1);
+  return Object.entries(counts).sort((a,b) => b[1] - a[1])[0]?.[0] || "–";
+}
+
+function renderSummary() {
+  if (!state.activeSession) return;
+
+  const records = currentSessionRecords();
+  byId("summaryTitle").textContent = state.activeSession.farm;
+  byId("summarySub").textContent = [
+    state.activeSession.mob,
+    new Date(state.activeSession.startDateTime).toLocaleDateString(),
+    `${records.length} cows recorded`
+  ].filter(Boolean).join(" · ");
+
+  byId("metricTotal").textContent = records.length;
+  byId("metricAverage").textContent = records.length
+    ? (records.reduce((sum, r) => sum + Number(r.severity), 0) / records.length).toFixed(1)
+    : "–";
+  byId("metricLesion").textContent = mostCommon(records.map(r => r.lesion));
+  byId("metricFoot").textContent = mostCommon(records.flatMap(r => footArray(r)));
+
+  const body = byId("summaryTableBody");
+  body.innerHTML = "";
+
+  if (!records.length) {
+    body.innerHTML = '<tr><td colspan="6" class="empty-cell">No records in this session.</td></tr>';
+    return;
+  }
+
+  records.forEach(r => {
+    const row = document.createElement("tr");
+    [
+      r.cow,
+      r.severity,
+      footText(r) || "—",
+      hoofDetailsText(r) || (r.lesion || "—"),
+      (r.treatment || []).join(" + ") || "—",
+      r.notes || "—"
+    ].forEach(value => {
+      const td = document.createElement("td");
+      td.textContent = value;
+      row.appendChild(td);
+    });
+    body.appendChild(row);
+  });
+}
+
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function countValues(values) {
+  const counts = {};
+  values.filter(Boolean).forEach(value => {
+    counts[value] = (counts[value] || 0) + 1;
+  });
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+}
+
+function formatWithholding(value, unit) {
+  if (value === "" || value === null || value === undefined) return "—";
+  const numeric = Number(value);
+  const label = numeric === 1
+    ? String(unit || "").replace(/s$/, "")
+    : (unit || "");
+  return `${value} ${label}`.trim();
+}
+
+function createFarmerReport() {
+  if (!state.activeSession) return;
+
+  const records = currentSessionRecords();
+  if (!records.length) {
+    alert("There are no cow records in this session.");
+    return;
+  }
+
+  const session = state.activeSession;
+  const averageSeverity = (
+    records.reduce((sum, record) => sum + Number(record.severity || 0), 0) / records.length
+  ).toFixed(1);
+
+  const highSeverity = records.filter(record => Number(record.severity) >= 4).length;
+  const treatmentCounts = countValues(records.flatMap(record => record.treatment || []));
+  const lesionCounts = countValues(records.flatMap(record => hoofDetailArray(record).map(detail => detail.lesion)));
+  const footCounts = countValues(records.flatMap(record => footArray(record)));
+  const outcomeCounts = countValues(records.flatMap(record => Array.isArray(record.outcome) ? record.outcome : (record.outcome ? [record.outcome] : [])));
+
+  const revisitRecords = records.filter(record => {
+    const outcomes = Array.isArray(record.outcome) ? record.outcome : (record.outcome ? [record.outcome] : []);
+    return outcomes.some(outcome => ["Revisit", "Arrange Vet Visit", "Claw Amp Candidate"].includes(outcome));
+  });
+
+  const medicines = [];
+  records.forEach(record => {
+    if (record.nsaidDrug) {
+      medicines.push({
+        cow: record.cow,
+        type: "NSAID",
+        drug: record.nsaidDrug,
+        milk: formatWithholding(record.nsaidMilkWhp, record.nsaidMilkUnit),
+        meat: formatWithholding(record.nsaidMeatWhp, record.nsaidMeatUnit)
+      });
+    }
+    if (record.antibioticDrug) {
+      medicines.push({
+        cow: record.cow,
+        type: "Antibiotic",
+        drug: record.antibioticDrug,
+        milk: formatWithholding(record.antibioticMilkWhp, record.antibioticMilkUnit),
+        meat: formatWithholding(record.antibioticMeatWhp, record.antibioticMeatUnit)
+      });
+    }
+  });
+
+  const breakdownRows = (entries, emptyText = "None recorded") =>
+    entries.length
+      ? entries.map(([name, count]) =>
+          `<tr><td>${escapeHtml(name)}</td><td class="number">${count}</td></tr>`
+        ).join("")
+      : `<tr><td colspan="2" class="empty">${emptyText}</td></tr>`;
+
+  const medicineRows = medicines.length
+    ? medicines.map(item => `
+        <tr>
+          <td>${escapeHtml(item.cow)}</td>
+          <td>${escapeHtml(item.type)}</td>
+          <td>${escapeHtml(item.drug)}</td>
+          <td>${escapeHtml(item.milk)}</td>
+          <td>${escapeHtml(item.meat)}</td>
+        </tr>`).join("")
+    : `<tr><td colspan="5" class="empty">No medicines recorded.</td></tr>`;
+
+  const followUpRows = revisitRecords.length
+    ? revisitRecords.map(record => `
+        <tr>
+          <td>${escapeHtml(record.cow)}</td>
+          <td>${escapeHtml(record.severity)}</td>
+          <td>${escapeHtml(footText(record) || "—")}</td>
+          <td>${escapeHtml(hoofDetailsText(record) || record.lesion || "—")}</td>
+          <td>${escapeHtml((Array.isArray(record.outcome) ? record.outcome : (record.outcome ? [record.outcome] : [])).join(" + ") || "—")}</td>
+          <td>${escapeHtml(record.notes || "—")}</td>
+        </tr>`).join("")
+    : `<tr><td colspan="6" class="empty">No revisit, veterinary visit, or claw amputation candidates recorded.</td></tr>`;
+
+  const recordRows = records.map(record => `
+    <tr>
+      <td>${escapeHtml(record.cow)}</td>
+      <td>${escapeHtml(record.severity)}</td>
+      <td>${escapeHtml(footText(record) || "—")}</td>
+      <td>${escapeHtml(hoofDetailsText(record) || record.lesion || "—")}</td>
+      <td>${escapeHtml((record.treatment || []).join(" + ") || "—")}</td>
+      <td>${escapeHtml((Array.isArray(record.outcome) ? record.outcome : (record.outcome ? [record.outcome] : [])).join(" + ") || "—")}</td>
+      <td>${escapeHtml(record.notes || "—")}</td>
+    </tr>`).join("");
+
+  const reportDate = new Date(session.startDateTime).toLocaleDateString();
+  const generatedDate = new Date().toLocaleString();
+
+  const reportHtml = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hoof Trimming Report - ${escapeHtml(session.farm)}</title>
+<style>
+  :root {
+    --light-brown: #a79075;
+    --dark-brown: #5c4b3a;
+    --warm: #f4f0eb;
+    --line: #d8cfc5;
+    --text: #302820;
+    --muted: #74685d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #e9e4de;
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.4;
+  }
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    background: rgba(48,40,32,.92);
+  }
+  .toolbar button {
+    border: 0;
+    border-radius: 9px;
+    padding: 11px 18px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .print-btn { background: var(--light-brown); color: white; }
+  .close-btn { background: white; color: var(--dark-brown); }
+  .page {
+    width: min(210mm, calc(100% - 28px));
+    min-height: 297mm;
+    margin: 20px auto;
+    padding: 17mm;
+    background: white;
+    box-shadow: 0 14px 38px rgba(50,40,30,.16);
+  }
+  .report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 25px;
+    padding-bottom: 16px;
+    border-bottom: 5px solid var(--dark-brown);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+  }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    color: white;
+    background: var(--dark-brown);
+    font-size: 21px;
+    font-weight: 800;
+  }
+  h1 { margin: 0; font-size: 27px; color: var(--dark-brown); }
+  .subtitle { margin: 3px 0 0; color: var(--muted); }
+  .report-meta { text-align: right; font-size: 13px; color: var(--muted); }
+  .details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 18px;
+    margin: 20px 0;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--warm);
+  }
+  .detail span, .metric span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+  .detail strong { display: block; margin-top: 3px; font-size: 15px; }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .metric {
+    min-height: 86px;
+    padding: 13px;
+    border-radius: 10px;
+    background: var(--dark-brown);
+    color: white;
+  }
+  .metric span { color: rgba(255,255,255,.75); }
+  .metric strong { display: block; margin-top: 6px; font-size: 25px; }
+  h2 {
+    margin: 24px 0 9px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--light-brown);
+    color: var(--dark-brown);
+    font-size: 18px;
+  }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  th {
+    padding: 8px 7px;
+    color: white;
+    background: var(--dark-brown);
+    text-align: left;
+  }
+  td {
+    padding: 7px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even) { background: #faf8f5; }
+  .number { width: 60px; text-align: center; font-weight: 700; }
+  .empty { color: var(--muted); font-style: italic; }
+  .note {
+    margin-top: 22px;
+    padding: 12px 14px;
+    border-left: 5px solid var(--light-brown);
+    background: var(--warm);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .footer {
+    margin-top: 25px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 11px;
+    text-align: center;
+  }
+  .avoid-break { break-inside: avoid; }
+  @media (max-width: 760px) {
+    .page { width: 100%; margin: 0; padding: 18px; box-shadow: none; }
+    .details, .metrics, .two-col { grid-template-columns: 1fr 1fr; }
+    .report-header { flex-direction: column; }
+    .report-meta { text-align: left; }
+  }
+  @media print {
+    @page { size: A4; margin: 12mm; }
+    body { background: white; }
+    .toolbar { display: none !important; }
+    .page {
+      width: auto;
+      min-height: auto;
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+    h2 { break-after: avoid; }
+    table { break-inside: auto; }
+    tr { break-inside: avoid; break-after: auto; }
+  }
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+    <button class="close-btn" onclick="window.close()">Close</button>
+  </div>
+
+  <main class="page">
+    <header class="report-header">
+      <div class="brand">
+        <div class="brand-mark">HR</div>
+        <div>
+          <h1>Hoof Trimming Report</h1>
+          <p class="subtitle">Session findings and treatment record</p>
+        </div>
+      </div>
+      <div class="report-meta">
+        <div><strong>Report date:</strong> ${escapeHtml(reportDate)}</div>
+        <div><strong>Generated:</strong> ${escapeHtml(generatedDate)}</div>
+      </div>
+    </header>
+
+    <section class="details">
+      <div class="detail"><span>Farm</span><strong>${escapeHtml(session.farm || "—")}</strong></div>
+      <div class="detail"><span>Mob</span><strong>${escapeHtml(session.mob || "—")}</strong></div>
+      <div class="detail"><span>Operator</span><strong>${escapeHtml(session.operator || "—")}</strong></div>
+      <div class="detail"><span>Session started</span><strong>${escapeHtml(new Date(session.startDateTime).toLocaleString())}</strong></div>
+      <div class="detail"><span>Session completed</span><strong>${escapeHtml(session.endDateTime ? new Date(session.endDateTime).toLocaleString() : "Not recorded")}</strong></div>
+    </section>
+
+    <section class="metrics">
+      <div class="metric"><span>Cows examined</span><strong>${records.length}</strong></div>
+      <div class="metric"><span>Average severity</span><strong>${averageSeverity}</strong></div>
+      <div class="metric"><span>Severity 4–5</span><strong>${highSeverity}</strong></div>
+      <div class="metric"><span>Follow-up cows</span><strong>${revisitRecords.length}</strong></div>
+    </section>
+
+    <section class="two-col avoid-break">
+      <div>
+        <h2>Lesion breakdown</h2>
+        <table><thead><tr><th>Lesion</th><th class="number">Cows</th></tr></thead>
+        <tbody>${breakdownRows(lesionCounts)}</tbody></table>
+      </div>
+      <div>
+        <h2>Treatments provided</h2>
+        <table><thead><tr><th>Treatment</th><th class="number">Cows</th></tr></thead>
+        <tbody>${breakdownRows(treatmentCounts)}</tbody></table>
+      </div>
+    </section>
+
+    <section class="two-col avoid-break">
+      <div>
+        <h2>Affected feet</h2>
+        <table><thead><tr><th>Hoof/Hooves</th><th class="number">Cows</th></tr></thead>
+        <tbody>${breakdownRows(footCounts)}</tbody></table>
+      </div>
+      <div>
+        <h2>Recorded outcomes</h2>
+        <table><thead><tr><th>Outcome</th><th class="number">Cows</th></tr></thead>
+        <tbody>${breakdownRows(outcomeCounts)}</tbody></table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Follow-up list</h2>
+      <table>
+        <thead><tr><th>Cow</th><th>Severity</th><th>Hoof/Hooves</th><th>Lesion</th><th>Outcome(s)</th><th>Notes</th></tr></thead>
+        <tbody>${followUpRows}</tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Medicines and withholding periods</h2>
+      <table>
+        <thead><tr><th>Cow</th><th>Type</th><th>Medicine</th><th>Milk WHP</th><th>Meat WHP</th></tr></thead>
+        <tbody>${medicineRows}</tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Complete cow record</h2>
+      <table>
+        <thead><tr><th>Cow</th><th>Severity</th><th>Hoof/Hooves</th><th>Lesion</th><th>Treatment</th><th>Outcome(s)</th><th>Notes</th></tr></thead>
+        <tbody>${recordRows}</tbody>
+      </table>
+    </section>
+
+    <div class="note">
+      This report records the lesions and treatments entered during the hoof-trimming session.
+      It does not include farm-management recommendations or Hooflife investigation findings.
+      Medicine and withholding information must be checked and recorded in accordance with the farms animal health plan.
+      Every care has been taken to ensure all treatment details are correct and have been recorded against the affected animal.
+    </div>
+
+    <footer class="footer">
+      Generated by Hoof Records V${escapeHtml(APP_VERSION)}
+    </footer>
+  </main>
+</body>
+</html>`;
+
+  const reportWindow = window.open("", "_blank");
+  if (!reportWindow) {
+    alert("The report window was blocked. Allow pop-ups for this page, then try again.");
+    return;
+  }
+
+  reportWindow.document.open();
+  reportWindow.document.write(reportHtml);
+  reportWindow.document.close();
+}
+
+
+function openOutlookEmail(subjectText, bodyText) {
+  const mailto =
+    `mailto:?subject=${encodeURIComponent(subjectText)}&body=${encodeURIComponent(bodyText)}`;
+  window.location.href = mailto;
+}
+
+function exportRecords(records, filename) {
+  if (!records.length) {
+    alert("There are no records to export.");
+    return;
+  }
 <!-- --- rest of HTML above the note --- -->
 
+  const headers = [
+    "Date", "Time", "Farm", "Mob", "Operator", "Conditions",
+    "Cow Number", "Severity", "Hoof/Hooves", "Hoof Details", "Lesion", "Treatment",
+    "NSAID Drug", "NSAID Milk WHP", "NSAID Milk Unit", "NSAID Meat WHP", "NSAID Meat Unit",
+    "Antibiotic Drug", "Antibiotic Milk WHP", "Antibiotic Milk Unit", "Antibiotic Meat WHP", "Antibiotic Meat Unit",
+    "Outcome(s)", "Notes"
+  ];
+
+  const rows = records.map(r => [
+    r.date, r.time, r.farm, r.mob, r.operator, r.weather,
+    r.cow, r.severity, footText(r), hoofDetailsText(r), r.lesion, (r.treatment || []).join(" + "),
+    r.nsaidDrug || "", r.nsaidMilkWhp || "", r.nsaidMilkUnit || "", r.nsaidMeatWhp || "", r.nsaidMeatUnit || "",
+    r.antibioticDrug || "", r.antibioticMilkWhp || "", r.antibioticMilkUnit || "", r.antibioticMeatWhp || "", r.antibioticMeatUnit || "",
+    (Array.isArray(r.outcome) ? r.outcome : (r.outcome ? [r.outcome] : [])).join(" + "), r.notes
+  ]);
+
+  const escapeCsv = value => `"${String(value ?? "").replace(/"/g, '""')}"`;
+  const csv = [headers, ...rows]
+    .map(row => row.map(escapeCsv).join(","))
+    .join("\n");
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function renderHistory() {
+  const query = byId("historySearch").value.trim().toLowerCase();
+  const records = allRecords()
+    .slice()
+    .reverse()
+    .filter(r => [
+      r.date, r.farm, r.mob, r.cow, r.severity, footText(r),
+      r.lesion, hoofDetailsText(r), (r.treatment || []).join(" "), r.notes
+    ].join(" ").toLowerCase().includes(query));
+
+  const body = byId("historyTableBody");
+  body.innerHTML = "";
+
+  if (!records.length) {
+    body.innerHTML = '<tr><td colspan="8" class="empty-cell">No matching records.</td></tr>';
+    return;
+  }
 <p class="auto-treatment-note"><strong>Scores 3–5 automatically select Block and NSAID. Either can be deselected or you can add extra blocks and other treatments if required.</strong></p>
 
+  records.forEach(r => {
+    const row = document.createElement("tr");
+    [
+      r.date,
+      r.farm,
+      r.mob || "—",
+      r.cow,
+      r.severity,
+      footText(r) || "—",
+      hoofDetailsText(r) || (r.lesion || "—"),
+      (r.treatment || []).join(" + ") || "—"
+    ].forEach(value => {
+      const td = document.createElement("td");
+      td.textContent = value;
+      row.appendChild(td);
+    });
+    body.appendChild(row);
+  });
+}
+
+function newSession() {
+  state.activeSession = null;
+  state.lastSavedRecord = null;
+  localStorage.removeItem(KEYS.active);
+  byId("farmInput").value = "";
+  byId("mobInput").value = "";
+  byId("headerSubtitle").textContent = "Private lameness recording · 2.3";
+  byId("lastSaved").textContent = "No cows saved this session.";
+  clearCowForm(false);
+  showScreen("startScreen");
+}
+
+document.querySelectorAll('[data-group="foot"] button').forEach(button => {
+  button.addEventListener("click", () => selectHoofTab(button.dataset.value));
+});
+
+document.querySelectorAll('[data-group="lesion"] button').forEach(button => {
+  button.addEventListener("click", () => {
+    if (!state.activeFoot) {
+      showToast("Choose a hoof tab first.", true);
+      return;
+    }
+
+    const detail = ensureActiveHoofDetail();
+    detail.lesion = button.dataset.value;
+    setSingleChoice("lesion", detail.lesion);
+    renderHoofAssignments();
+  });
+});
+
+document.querySelectorAll('[data-group="treatment"] button').forEach(button => {
+  button.addEventListener("click", () => {
+    if (!state.activeFoot) {
+      showToast("Choose a hoof tab first.", true);
+      return;
+    }
+
+    const detail = ensureActiveHoofDetail();
+    const value = button.dataset.value;
+    detail.treatment = detail.treatment.includes(value)
+      ? detail.treatment.filter(item => item !== value)
+      : [...detail.treatment, value];
+
+    setMultiChoice("treatment", detail.treatment);
+    renderHoofAssignments();
+    updateMedicinePanels();
+  });
+});
+
+byId("startSessionBtn").addEventListener("click", startSession);
+byId("saveCowBtn").addEventListener("click", saveCow);
+byId("clearCowBtn").addEventListener("click", () => clearCowForm(true));
+byId("repeatLastBtn").addEventListener("click", repeatLastTreatment);
+byId("undoBtn").addEventListener("click", undoLastCow);
+byId("finishSessionBtn").addEventListener("click", finishSession);
+byId("newSessionBtn").addEventListener("click", newSession);
+byId("farmerReportBtn").addEventListener("click", createFarmerReport);
+byId("clearActiveHoofBtn").addEventListener("click", clearActiveHoof);
+byId("clearHoofAssignmentsBtn").addEventListener("click", () => {
+  state.activeFoot = "";
+  state.foot = [];
+  state.hoofDetails = {};
+  setMultiChoice("foot", []);
+  setSingleChoice("lesion", "");
+  setMultiChoice("treatment", []);
+  renderHoofAssignments();
+  updateMedicinePanels();
+  showToast("All hoof details cleared");
+});
+byId("hoofAssignmentsPreview").addEventListener("click", event => {
+  const button = event.target.closest("[data-remove-hoof]");
+  if (!button) return;
+
+  const hoof = button.dataset.removeHoof;
+  delete state.hoofDetails[hoof];
+
+  if (state.activeFoot === hoof) {
+    state.activeFoot = "";
+    state.foot = [];
+    setMultiChoice("foot", []);
+    setSingleChoice("lesion", "");
+    setMultiChoice("treatment", []);
+  }
 <!-- --- rest of HTML below the note --- -->
 
+  renderHoofAssignments();
+  updateMedicinePanels();
+});
+
+byId("exportCsvBtn").addEventListener("click", () => {
+  if (!state.activeSession) return;
+
+  const exportDate = new Date().toISOString().slice(0,10);
+  const filename =
+    `hoof-records-${state.activeSession.farm.replace(/\s+/g, "-").toLowerCase()}-${exportDate}.csv`;
+
+  exportRecords(currentSessionRecords(), filename);
+
+  const farm = state.activeSession.farm || "Farm";
+  const mob = state.activeSession.mob || "Mob";
+  const subject = `Hoof Records CSV - ${farm} - ${mob} - ${exportDate}`;
+  const body = [
+    "Hi,",
+    "",
+    `Please find attached the hoof records CSV for ${farm}, ${mob}, dated ${exportDate}.`,
+    "",
+    `The file "${filename}" has downloaded to this device.`,
+    "Please attach it from the Downloads folder before sending.",
+    "",
+    "Regards"
+  ].join("\\n");
+
+  window.setTimeout(() => openOutlookEmail(subject, body), 350);
+});
+
+byId("exportAllBtn").addEventListener("click", () => {
+  const exportDate = new Date().toISOString().slice(0,10);
+  const filename = `hoof-records-all-${exportDate}.csv`;
+
+  exportRecords(allRecords(), filename);
+
+  const subject = `All Hoof Records CSV - ${exportDate}`;
+  const body = [
+    "Hi,",
+    "",
+    "Please find attached the complete hoof records CSV export.",
+    "",
+    `The file "${filename}" has downloaded to this device.`,
+    "Please attach it from the Downloads folder before sending.",
+    "",
+    "Regards"
+  ].join("\\n");
+
+  window.setTimeout(() => openOutlookEmail(subject, body), 350);
+});
+
+byId("backToRecordsBtn").addEventListener("click", () => showScreen("historyScreen"));
+byId("historyBackBtn").addEventListener("click", () => {
+  showScreen(state.activeSession ? "summaryScreen" : "startScreen");
+});
+
+byId("historySearch").addEventListener("input", renderHistory);
+
+
+byId("nsaidDrug").addEventListener("change", e => {
+  const drug = e.target.value;
+  byId("nsaidOtherDrug").classList.toggle("hidden", drug !== "Other");
+
+  if (drug === "Metacam") {
+    byId("nsaidMilkWhp").value = "84";
+    byId("nsaidMilkUnit").value = "hours";
+    byId("nsaidMeatWhp").value = "10";
+    byId("nsaidMeatUnit").value = "days";
+  } else if (drug === "Key 10%") {
+    byId("nsaidMilkWhp").value = "0";
+    byId("nsaidMilkUnit").value = "hours";
+    byId("nsaidMeatWhp").value = "4";
+    byId("nsaidMeatUnit").value = "days";
+  } else {
+    byId("nsaidMilkWhp").value = "";
+    byId("nsaidMeatWhp").value = "";
+    byId("nsaidMilkUnit").value = "hours";
+    byId("nsaidMeatUnit").value = "days";
+  }
+});
+byId("antibioticDrug").addEventListener("change", e => {
+  const drug = e.target.value;
+  byId("antibioticOtherDrug").classList.toggle("hidden", drug !== "Other");
+
+  if (drug === "Intracillin 300") {
+    byId("antibioticMilkWhp").value = "96";
+    byId("antibioticMilkUnit").value = "hours";
+    byId("antibioticMeatWhp").value = "10";
+    byId("antibioticMeatUnit").value = "days";
+  } else if (drug === "Depocillin") {
+    byId("antibioticMilkWhp").value = "108";
+    byId("antibioticMilkUnit").value = "hours";
+    byId("antibioticMeatWhp").value = "10";
+    byId("antibioticMeatUnit").value = "days";
+  } else {
+    byId("antibioticMilkWhp").value = "";
+    byId("antibioticMeatWhp").value = "";
+    byId("antibioticMilkUnit").value = "hours";
+    byId("antibioticMeatUnit").value = "days";
+  }
+});
+
+byId("clearAllBtn").addEventListener("click", () => {
+  if (!confirm("Delete all saved records and sessions from this device?")) return;
+  localStorage.removeItem(KEYS.records);
+  localStorage.removeItem(KEYS.sessions);
+  renderHistory();
+});
+
+document.querySelectorAll("[data-nav]").forEach(button => {
+  button.addEventListener("click", () => showScreen(button.dataset.nav));
+});
+
+updateMedicinePanels();
+const restored = loadJSON(KEYS.active, null);
+if (restored && !restored.finished) {
+  state.activeSession = restored;
+  state.lastSavedRecord = currentSessionRecords().slice(-1)[0] || null;
+  updateSessionHeader();
+  if (state.lastSavedRecord) {
+    byId("lastSaved").textContent =
+      `Last saved: Cow ${state.lastSavedRecord.cow} · Score ${state.lastSavedRecord.severity} · ${state.lastSavedRecord.foot}`;
+  }
+  showScreen("recordScreen");
+} else {
+  showScreen("startScreen");
+}
+// PWA_INSTALL_LOGIC_V2
+let deferredInstallPrompt=null;
+const installAppBtn=document.getElementById("installAppBtn");
+const standalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+if(installAppBtn&&!standalone) installAppBtn.classList.remove("hidden");
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredInstallPrompt=e;installAppBtn?.classList.remove("hidden");});
+installAppBtn?.addEventListener("click",async()=>{if(deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;}else{alert(/iphone|ipad|ipod/i.test(navigator.userAgent)?"In Safari, tap Share, then Add to Home Screen.":"Open your browser menu and choose Install app or Add to Home screen.");}});
+window.addEventListener("appinstalled",()=>installAppBtn?.classList.add("hidden"));
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error));}
+</script>
 </body>
 </html>
