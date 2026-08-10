@@ -1,19 +1,16 @@
-HOOF RECORDS 2.3 — INDEPENDENT HOOF TABS
+HOOF RECORDS 2.3 — CURRENT LAYOUT REPAIRED
 
-Each hoof now has its own independent lesion and treatment selections.
+This package uses the layout supplied by Peter as the current baseline.
 
-Workflow:
-1. Tap LF, RF, LH, or RH.
-2. Choose the lesion and treatment for that hoof.
-3. Tap another hoof tab.
-4. Choose different details for that hoof.
-5. Save the cow once.
+Repairs made:
+- Kept Quick Actions / Session Summary inside the right-hand record-layout column.
+- Closed the Treatment section correctly before Outcome.
+- Rear hoof codes now store and display LR / RR consistently (old LH / RH records still display correctly).
+- The visible "No" treatment now saves as "No" rather than "Bandage".
+- Most Common Lesion now counts lesions per hoof, not a combined cow-level lesion string.
 
-A tick appears on hoof tabs that contain details. Returning to a tab reloads that hoof's selections.
+The independent hoof-tab workflow is preserved. Each hoof keeps its own lesion and treatments.
 
-This is a static Progressive Web App. It does not use npm or package.json.
-
-Upload every file directly to the root of the existing GitHub repository, replace the old files, and commit.
-
-App URL:
-https://petegallacherr.github.io/hoof-records/
+GITHUB PAGES UPLOAD
+Upload every file in this folder directly to the repository root and commit.
+No npm, package.json, or PowerShell build command is required.

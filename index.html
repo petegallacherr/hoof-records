@@ -1246,8 +1246,8 @@ textarea {
               <div class="foot-grid hoof-tabs" data-group="foot" data-multiple="true">
                 <button type="button" data-value="LF"><strong>LF</strong><span>Left front</span></button>
                 <button type="button" data-value="RF"><strong>RF</strong><span>Right front</span></button>
-                <button type="button" data-value="LH"><strong>LR</strong><span>Left rear</span></button>
-                <button type="button" data-value="RH"><strong>RR</strong><span>Right rear</span></button>
+                <button type="button" data-value="LR"><strong>LR</strong><span>Left rear</span></button>
+                <button type="button" data-value="RR"><strong>RR</strong><span>Right rear</span></button>
               </div>
             </div>
 
@@ -1310,7 +1310,7 @@ textarea {
                 <button type="button" data-value="Block">Block</button>
                 <button type="button" data-value="NSAID">NSAID</button>
                 <button type="button" data-value="Antibiotic">Antibiotic</button>
-                <button type="button" data-value="Bandage">No trim required</button>
+                <button type="button" data-value="No">No</button>
                 <button type="button" data-value="Refil">Refil kit (CuSO4)</button>
                               </div>
 
@@ -1386,6 +1386,7 @@ textarea {
               <p class="withholding-note">
                 Withholding periods auto-fill for Metacam, Key 10%, Intra 300, and Depocillin. They can still be changed manually.
               </p>
+            </div>
 
             <div class="section-block">
               <div class="section-heading">
@@ -1405,7 +1406,6 @@ textarea {
               <textarea id="notes" rows="3" placeholder="Optional notes"></textarea>
             </div>
           </section>
-           </div>
 
           <aside class="side-panel">
             <div class="side-card">
@@ -1423,6 +1423,7 @@ textarea {
               <div><span>Rechecks</span><strong id="sideRechecks">0</strong></div>
             </div>
           </aside>
+        </div>
 
         <div class="sticky-actions">
           <button id="clearCowBtn" type="button" class="secondary-button">Clear cow</button>
@@ -1690,10 +1691,17 @@ function outcomeText(record) {
   return outcomeArray(record).join(" + ");
 }
 
+function normalizeFootCode(foot) {
+  if (foot === "LH") return "LR";
+  if (foot === "RH") return "RR";
+  return foot || "";
+}
+
 function footArray(record) {
-  return Array.isArray(record.foot)
+  const feet = Array.isArray(record.foot)
     ? record.foot
     : (record.foot ? [record.foot] : []);
+  return feet.map(normalizeFootCode).filter(Boolean);
 }
 
 function footText(record) {
@@ -1707,14 +1715,14 @@ function uniqueValues(values) {
 function hoofDetailArray(record) {
   if (Array.isArray(record?.hoofDetails)) {
     return record.hoofDetails.filter(detail => detail && detail.foot).map(detail => ({
-      foot: detail.foot,
+      foot: normalizeFootCode(detail.foot),
       lesion: detail.lesion || "",
       treatment: [...(detail.treatment || [])]
     }));
   }
   if (record?.hoofDetails && typeof record.hoofDetails === "object") {
     return Object.entries(record.hoofDetails).filter(([foot]) => !!foot).map(([foot, detail]) => ({
-      foot,
+      foot: normalizeFootCode(foot),
       lesion: detail?.lesion || "",
       treatment: [...(detail?.treatment || [])]
     }));
@@ -2107,7 +2115,7 @@ function renderSummary() {
   byId("metricAverage").textContent = records.length
     ? (records.reduce((sum, r) => sum + Number(r.severity), 0) / records.length).toFixed(1)
     : "–";
-  byId("metricLesion").textContent = mostCommon(records.map(r => r.lesion));
+  byId("metricLesion").textContent = mostCommon(records.flatMap(r => hoofDetailArray(r).map(detail => detail.lesion)));
   byId("metricFoot").textContent = mostCommon(records.flatMap(r => footArray(r)));
 
   const body = byId("summaryTableBody");
