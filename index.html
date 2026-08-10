@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#5c4b3a" />
-  <title>Hoof Records 2.4.1</title>
+  <title>Hoof Records 2.4.2</title>
   <style>:root {
   /* Vetlife V2.8 colour theme */
   --light-brown: #a79075;
@@ -299,7 +299,7 @@ input:focus, textarea:focus, button:focus-visible {
 }
 
 .cow-number-block label {
-  font-size: 30px;
+  font-size: 20px;
 }
 
 .cow-number-block input {
@@ -1159,6 +1159,53 @@ textarea {
   background:#fff;
   color:var(--dark-brown);
 }
+
+/* ===== PORTRAIT-ONLY PHONE WORKFLOW ===== */
+.portrait-only-overlay { display: none; }
+
+@media (orientation: landscape) and (max-height: 650px) {
+  body > #portraitOnlyOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    background: var(--dark-brown);
+    color: #fff;
+    text-align: center;
+  }
+
+  #portraitOnlyOverlay .portrait-message {
+    width: min(440px, 100%);
+  }
+
+  #portraitOnlyOverlay .portrait-icon {
+    display: block;
+    margin: 0 auto 18px;
+    font-size: 54px;
+    line-height: 1;
+  }
+
+  #portraitOnlyOverlay h2 {
+    margin: 0 0 10px;
+    font-size: 26px;
+  }
+
+  #portraitOnlyOverlay p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    opacity: 0.88;
+  }
+
+  body > #app {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
 </style>
 
   <meta name="description" content="Offline hoof-trimming and lameness session records for phones and tablets.">
@@ -1173,13 +1220,20 @@ textarea {
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 </head>
 <body>
+  <div id="portraitOnlyOverlay" class="portrait-only-overlay" aria-live="polite">
+    <div class="portrait-message">
+      <span class="portrait-icon" aria-hidden="true">↻</span>
+      <h2>Rotate your device</h2>
+      <p>Hoof Records is designed for portrait use. Turn your phone upright to continue recording.</p>
+    </div>
+  </div>
   <div id="app">
     <header class="app-header">
       <div class="brand-block">
         <div class="brand-mark">HR</div>
         <div>
           <h1>Hoof Records</h1>
-          <p id="headerSubtitle">Private lameness recording · 2.4.1</p>
+          <p id="headerSubtitle">Private lameness recording · 2.4.2</p>
         </div>
       </div>
 
@@ -1226,7 +1280,7 @@ textarea {
         <div class="record-layout">
           <section class="record-card">
             <div class="cow-number-block">
-              <h2>Cow number</h2>
+              <label for="cowNumber">Cow number</label>
               <input
                 id="cowNumber"
                 type="tel"
@@ -1237,11 +1291,11 @@ textarea {
                 placeholder="Enter number"
               />
             </div>
-              
 
             <div id="hoofTabsSection" class="section-block">
               <div class="section-heading">
-                <h2>Hoof Selection</h2>
+                <h2>Hoof tabs</h2>
+                <span>Select one hoof at a time</span>
               </div>
               <div class="foot-grid hoof-tabs" data-group="foot" data-multiple="true">
                 <button type="button" data-value="LF"><strong>LF</strong><span>Left front</span></button>
@@ -1537,7 +1591,7 @@ textarea {
     </nav>
   </div>
 
-  <script>const APP_VERSION = "2.4.1";
+  <script>const APP_VERSION = "2.4.2";
 
 const KEYS = {
   records: "hoofRecordsV2Records",
@@ -1559,6 +1613,22 @@ const state = {
 };
 
 const byId = id => document.getElementById(id);
+
+async function tryLockPortraitOrientation() {
+  try {
+    if (screen.orientation && typeof screen.orientation.lock === "function") {
+      await screen.orientation.lock("portrait");
+    }
+  } catch (error) {
+    // Normal browser tabs may reject orientation locking.
+    // The landscape rotate-device screen remains the fallback.
+  }
+}
+
+window.addEventListener("load", tryLockPortraitOrientation);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) tryLockPortraitOrientation();
+});
 
 function loadJSON(key, fallback) {
   try {
@@ -1868,7 +1938,7 @@ function updateSessionHeader() {
     state.activeSession.operator || "No operator"
   ];
   byId("sessionMeta").textContent = bits.join(" · ");
-  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.4.1`;
+  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.4.2`;
   refreshSessionStats();
 }
 
@@ -3009,7 +3079,7 @@ function newSession() {
   localStorage.removeItem(KEYS.active);
   byId("farmInput").value = "";
   byId("mobInput").value = "";
-  byId("headerSubtitle").textContent = "Private lameness recording · 2.4.1";
+  byId("headerSubtitle").textContent = "Private lameness recording · 2.4.2";
   byId("lastSaved").textContent = "No cows saved this session.";
   clearCowForm(false);
   showScreen("startScreen");

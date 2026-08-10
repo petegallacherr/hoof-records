@@ -1,15 +1,13 @@
-HOOF RECORDS 2.4.1 — COW NUMBER NEXT WORKFLOW
+HOOF RECORDS 2.4.2 — PORTRAIT-ONLY PHONE WORKFLOW
 
-This version keeps the current Hoof Records 2.4 layout and functionality.
+New:
+- The installed PWA requests portrait orientation.
+- Where supported, Hoof Records locks to portrait.
+- In normal browser tabs that do not allow orientation locking, rotating the phone sideways shows a clear "Rotate your device" screen instead of the landscape app layout.
+- Turning the phone upright immediately restores the app.
 
-Workflow change:
-- After entering the cow number, tapping the phone/tablet keyboard Next/Enter button no longer jumps to Notes.
-- The cow number is retained.
-- The keyboard closes.
-- The page moves directly to the Hoof tabs section.
-- No hoof is selected automatically; you choose the required hoof as normal.
-
-Also retained:
+Retained:
+- Cow number Next/Enter closes the keyboard and moves to Hoof tabs.
 - Independent hoof tabs.
 - Email / Share Farmer Report.
 - Farmer Report preview / print.
