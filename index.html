@@ -1240,6 +1240,19 @@ textarea {
 
             <div class="section-block">
               <div class="section-heading">
+                <h2>Hoof tabs</h2>
+                <span>Select one hoof at a time</span>
+              </div>
+              <div class="foot-grid hoof-tabs" data-group="foot" data-multiple="true">
+                <button type="button" data-value="LF"><strong>LF</strong><span>Left front</span></button>
+                <button type="button" data-value="RF"><strong>RF</strong><span>Right front</span></button>
+                <button type="button" data-value="LH"><strong>LR</strong><span>Left rear</span></button>
+                <button type="button" data-value="RH"><strong>RR</strong><span>Right rear</span></button>
+              </div>
+            </div>
+
+            <div class="section-block">
+              <div class="section-heading">
                 <h2>Lameness Severity</h2>
                 <span>Required</span>
               </div>
@@ -1250,20 +1263,12 @@ textarea {
                 <button type="button" data-value="4" class="score score-4">4</button>
                 <button type="button" data-value="5" class="score score-5">5</button>
               </div>
-              <p class="auto-treatment-note">Scores 3–5 automatically select Block and NSAID. Either can still be deselected.</p>
-            </div>
-
-            <div class="section-block">
-              <div class="section-heading">
-                <h2>Hoof tabs</h2>
-                <span>Select one hoof at a time</span>
-              </div>
-              <div class="foot-grid hoof-tabs" data-group="foot" data-multiple="true">
-                <button type="button" data-value="LF"><strong>LF</strong><span>Left front</span></button>
-                <button type="button" data-value="RF"><strong>RF</strong><span>Right front</span></button>
-                <button type="button" data-value="LH"><strong>LH</strong><span>Left hind</span></button>
-                <button type="button" data-value="RH"><strong>RH</strong><span>Right hind</span></button>
-              </div>
+              <p class="auto-treatment-note">1 - Trim</p>
+              <p class="auto-treatment-note">2 - Mild</p>
+              <p class="auto-treatment-note">3 - Moderate</p>
+              <p class="auto-treatment-note">4 - Complex</p>
+              <p class="auto-treatment-note">5 - Veterinary intervention</p>
+              <p class="auto-treatment-note"><strong>Scores 3–5 will automatically select Block and NSAID. Either can be deselected or otehr treatments added if required.</strong></p>
             </div>
 
             <div class="section-block">
@@ -2519,10 +2524,10 @@ function createFarmerReport() {
     </section>
 
     <div class="note">
-      This report records the findings and treatments entered during the hoof-trimming session.
-      It does not include farm-management recommendations or a Hooflife investigation.
-      Medicine and withholding information must be checked against the product label, veterinary instructions,
-      and the farm animal health plan before being relied upon.
+      This report records the lesions and treatments entered during the hoof-trimming session.
+      It does not include farm-management recommendations or results of a Hooflife investigation.
+      Treatment and withholding information must be recorded and entered as per the farms animal health plan.
+      All treatments and cow identity details are recorded to the best of our abilities.  
     </div>
 
     <footer class="footer">
