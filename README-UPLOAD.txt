@@ -1,21 +1,22 @@
-HOOF RECORDS 2.4 — EMAIL / SHARE FARMER REPORT + NO WEATHER
+HOOF RECORDS 2.4.1 — COW NUMBER NEXT WORKFLOW
 
-This version keeps the current repaired layout and independent hoof tabs.
+This version keeps the current Hoof Records 2.4 layout and functionality.
 
-Changes:
-- Adds Email / Share Farmer Report.
-- On supported phones and tablets, the app creates a PDF in memory and opens the device Share menu with the PDF attached.
-- Choose Outlook, Gmail, Mail, or another compatible app to send the report.
-- If a browser/device does not support direct file sharing, the app falls back to downloading the PDF and opening an email draft.
-- Removes weather / conditions from sessions.
-- Removes weather / conditions from the Farmer Report.
-- Removes the Conditions column from CSV exports.
-- Keeps Farmer Report preview / Print / Save PDF as a separate option.
+Workflow change:
+- After entering the cow number, tapping the phone/tablet keyboard Next/Enter button no longer jumps to Notes.
+- The cow number is retained.
+- The keyboard closes.
+- The page moves directly to the Hoof tabs section.
+- No hoof is selected automatically; you choose the required hoof as normal.
+
+Also retained:
+- Independent hoof tabs.
+- Email / Share Farmer Report.
+- Farmer Report preview / print.
+- No weather / conditions section.
+- CSV export and local storage.
 
 UPLOAD
 Upload every file in this ZIP directly into the root of the GitHub repository and replace the existing files.
 
 No npm, package.json, or Expo commands are required.
-
-App URL:
-https://petegallacherr.github.io/hoof-records/

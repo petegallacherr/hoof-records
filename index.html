@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#5c4b3a" />
-  <title>Hoof Records 2.4</title>
+  <title>Hoof Records 2.4.1</title>
   <style>:root {
   /* Vetlife V2.8 colour theme */
   --light-brown: #a79075;
@@ -1179,7 +1179,7 @@ textarea {
         <div class="brand-mark">HR</div>
         <div>
           <h1>Hoof Records</h1>
-          <p id="headerSubtitle">Private lameness recording · 2.4</p>
+          <p id="headerSubtitle">Private lameness recording · 2.4.1</p>
         </div>
       </div>
 
@@ -1238,7 +1238,7 @@ textarea {
               />
             </div>
 
-            <div class="section-block">
+            <div id="hoofTabsSection" class="section-block">
               <div class="section-heading">
                 <h2>Hoof tabs</h2>
                 <span>Select one hoof at a time</span>
@@ -1537,7 +1537,7 @@ textarea {
     </nav>
   </div>
 
-  <script>const APP_VERSION = "2.4";
+  <script>const APP_VERSION = "2.4.1";
 
 const KEYS = {
   records: "hoofRecordsV2Records",
@@ -1868,7 +1868,7 @@ function updateSessionHeader() {
     state.activeSession.operator || "No operator"
   ];
   byId("sessionMeta").textContent = bits.join(" · ");
-  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.4`;
+  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.4.1`;
   refreshSessionStats();
 }
 
@@ -3009,7 +3009,7 @@ function newSession() {
   localStorage.removeItem(KEYS.active);
   byId("farmInput").value = "";
   byId("mobInput").value = "";
-  byId("headerSubtitle").textContent = "Private lameness recording · 2.4";
+  byId("headerSubtitle").textContent = "Private lameness recording · 2.4.1";
   byId("lastSaved").textContent = "No cows saved this session.";
   clearCowForm(false);
   showScreen("startScreen");
@@ -3050,6 +3050,36 @@ document.querySelectorAll('[data-group="treatment"] button').forEach(button => {
     renderHoofAssignments();
     updateMedicinePanels();
   });
+});
+
+function moveCowNumberToHoofTabs() {
+  const cowNumber = byId("cowNumber");
+  if (!cowNumber.value.trim()) {
+    showToast("Enter the cow number first.", true);
+    return;
+  }
+
+  // Close the phone/tablet keyboard instead of jumping to the Notes field.
+  cowNumber.blur();
+
+  // Give the keyboard a moment to collapse, then move the screen to Hoof tabs.
+  window.setTimeout(() => {
+    const hoofTabsSection = byId("hoofTabsSection");
+    if (hoofTabsSection) {
+      hoofTabsSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+  }, 120);
+}
+
+byId("cowNumber").addEventListener("keydown", event => {
+  if (event.key !== "Enter") return;
+
+  event.preventDefault();
+  event.stopPropagation();
+  moveCowNumberToHoofTabs();
 });
 
 byId("startSessionBtn").addEventListener("click", startSession);
