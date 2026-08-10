@@ -1,5 +1,4 @@
-<!DOCTYPE> 
-<html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -1000,19 +999,6 @@ textarea {
   }
 
   .choice-grid button {
-    min-height: 62px;
-  }
-
-  .choice-grid button {
-    min-height: 62px;
-  }
-}
-</style>
-</head>
-<body>
-  }
-
-.choice-grid button {
     min-height: 58px;
     padding: 9px 7px;
     font-size: 15px;
@@ -1217,7 +1203,7 @@ textarea {
             <input id="mobInput" type="text" placeholder="Enter mob or group" autocomplete="off" />
 
             <label for="operatorInput">Operator</label>
-            <input id="operatorInput" type="text" placeholder="Vet/Tech name" autocomplete="off" />
+            <input id="operatorInput" type="text" value="Peter" autocomplete="off" />
 
             <button id="startSessionBtn" class="primary-xl" type="button">Start session</button>
             <p class="privacy-note">Records stay on this device until you export or clear them.</p>
@@ -1248,21 +1234,8 @@ textarea {
                 pattern="[0-9]*"
                 enterkeyhint="next"
                 autocomplete="off"
-                placeholder="Cow number"
+                placeholder="Enter number"
               />
-            </div>
-
-            <div class="section-block">
-              <div class="section-heading">
-                <h2>Hoof tabs</h2>
-                <span>Select and treat one hoof at a time</span>
-              </div>
-              <div class="foot-grid hoof-tabs" data-group="foot" data-multiple="true">
-                <button type="button" data-value="LF"><strong>LF</strong><span>Left front</span></button>
-                <button type="button" data-value="RF"><strong>RF</strong><span>Right front</span></button>
-                <button type="button" data-value="LH"><strong>LR</strong><span>Left rear</span></button>
-                <button type="button" data-value="RH"><strong>RR</strong><span>Right Rear</span></button>
-              </div>
             </div>
 
             <div class="section-block">
@@ -1277,12 +1250,20 @@ textarea {
                 <button type="button" data-value="4" class="score score-4">4</button>
                 <button type="button" data-value="5" class="score score-5">5</button>
               </div>
-              <p class="auto-treatment-note">1 - Trim.</p>
-              <p class="auto-treatment-note">2 - Mild.</p>
-              <p class="auto-treatment-note">3 - Moderate.</p>
-              <p class="auto-treatment-note">4 - Complex.</p>
-              <p class="auto-treatment-note">5 - Vet Intervention.</p>
-              <p class="auto-treatment-note"><strong>Scores 3–5 automatically select Block and NSAID. Either can be deselected or you can add extra blocks and other treatments if required.</strong></p
+              <p class="auto-treatment-note">Scores 3–5 automatically select Block and NSAID. Either can still be deselected.</p>
+            </div>
+
+            <div class="section-block">
+              <div class="section-heading">
+                <h2>Hoof tabs</h2>
+                <span>Select one hoof at a time</span>
+              </div>
+              <div class="foot-grid hoof-tabs" data-group="foot" data-multiple="true">
+                <button type="button" data-value="LF"><strong>LF</strong><span>Left front</span></button>
+                <button type="button" data-value="RF"><strong>RF</strong><span>Right front</span></button>
+                <button type="button" data-value="LH"><strong>LH</strong><span>Left hind</span></button>
+                <button type="button" data-value="RH"><strong>RH</strong><span>Right hind</span></button>
+              </div>
             </div>
 
             <div class="section-block">
@@ -1296,14 +1277,14 @@ textarea {
                 <button type="button" data-value="Sole ulcer">Sole ulcer</button>
                 <button type="button" data-value="Bruising">Bruising</button>
                 <button type="button" data-value="Interdigital hyperplasia">Interdigital hyperplasia</button>
-                <button type="button" data-value="Other">Overgrown</button>
+                <button type="button" data-value="Other">Other</button>
               </div>
             </div>
 
             <div class="section-block">
               <div class="section-heading">
                 <h2>Treatment</h2>
-                <span>Select treatment</span>
+                <span>Select any</span>
               </div>
               <div class="choice-grid treatment-grid" data-group="treatment" data-multiple="true">
                 <button type="button" data-value="Trim">Trim</button>
@@ -2038,8 +2019,7 @@ function undoLastCow() {
   if (!sessionRecords.length) {
     showToast("No cow to undo.", true);
     return;
-    min-height: 62px;
-}
+  }
 
   const last = sessionRecords[sessionRecords.length - 1];
 
@@ -2051,9 +2031,7 @@ function undoLastCow() {
   if (lastIndex === -1) {
     showToast("The last cow could not be found in records.", true);
     return;
-  .choice-grid button {
-    min-height: 62px;
-}
+  }
 
   records.splice(lastIndex, 1);
   saveJSON(KEYS.records, records);
@@ -2478,6 +2456,7 @@ function createFarmerReport() {
       <div class="detail"><span>Farm</span><strong>${escapeHtml(session.farm || "—")}</strong></div>
       <div class="detail"><span>Mob</span><strong>${escapeHtml(session.mob || "—")}</strong></div>
       <div class="detail"><span>Operator</span><strong>${escapeHtml(session.operator || "—")}</strong></div>
+      <div class="detail"><span>Conditions</span><strong>${escapeHtml(session.weather || "—")}</strong></div>
       <div class="detail"><span>Session started</span><strong>${escapeHtml(new Date(session.startDateTime).toLocaleString())}</strong></div>
       <div class="detail"><span>Session completed</span><strong>${escapeHtml(session.endDateTime ? new Date(session.endDateTime).toLocaleString() : "Not recorded")}</strong></div>
     </section>
@@ -2540,10 +2519,10 @@ function createFarmerReport() {
     </section>
 
     <div class="note">
-      This report records the lesions and treatments entered during the hoof-trimming session.
-      It does not include farm-management recommendations or Hooflife investigation findings.
-      Medicine and withholding information must be checked and recorded in accordance with the farms animal health plan.
-      Every care has been taken to ensure all treatment details are correct and have been recorded against the affected animal.
+      This report records the findings and treatments entered during the hoof-trimming session.
+      It does not include farm-management recommendations or a Hooflife investigation.
+      Medicine and withholding information must be checked against the product label, veterinary instructions,
+      and the farm animal health plan before being relied upon.
     </div>
 
     <footer class="footer">
@@ -2576,7 +2555,6 @@ function exportRecords(records, filename) {
     alert("There are no records to export.");
     return;
   }
-<!-- --- rest of HTML above the note --- -->
 
   const headers = [
     "Date", "Time", "Farm", "Mob", "Operator", "Conditions",
@@ -2627,7 +2605,6 @@ function renderHistory() {
     body.innerHTML = '<tr><td colspan="8" class="empty-cell">No matching records.</td></tr>';
     return;
   }
-<p class="auto-treatment-note"><strong>Scores 3–5 automatically select Block and NSAID. Either can be deselected or you can add extra blocks and other treatments if required.</strong></p>
 
   records.forEach(r => {
     const row = document.createElement("tr");
@@ -2732,7 +2709,6 @@ byId("hoofAssignmentsPreview").addEventListener("click", event => {
     setSingleChoice("lesion", "");
     setMultiChoice("treatment", []);
   }
-<!-- --- rest of HTML below the note --- -->
 
   renderHoofAssignments();
   updateMedicinePanels();
