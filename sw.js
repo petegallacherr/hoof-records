@@ -1,4 +1,4 @@
-const CACHE = "hoof-records-2.4.2-layout-repair-20260810";
+const CACHE = "hoof-records-2.4.3-layout-repair-20260810";
 const FILES = [
   "./",
   "./index.html",

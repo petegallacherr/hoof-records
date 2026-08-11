@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#5c4b3a" />
-  <title>Hoof Records 2.4.2</title>
+  <title>Hoof Records 2.4.3</title>
   <style>:root {
   /* Vetlife V2.8 colour theme */
   --light-brown: #a79075;
@@ -1233,7 +1233,7 @@ textarea {
         <div class="brand-mark">HR</div>
         <div>
           <h1>Hoof Records</h1>
-          <p id="headerSubtitle">Private lameness recording · 2.4.2</p>
+          <p id="headerSubtitle">Private lameness recording · 2.4.3</p>
         </div>
       </div>
 
@@ -1592,7 +1592,7 @@ textarea {
     </nav>
   </div>
 
-  <script>const APP_VERSION = "2.4.2";
+  <script>const APP_VERSION = "2.4.3";
 
 const KEYS = {
   records: "hoofRecordsV2Records",
@@ -1939,7 +1939,7 @@ function updateSessionHeader() {
     state.activeSession.operator || "No operator"
   ];
   byId("sessionMeta").textContent = bits.join(" · ");
-  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.4.2`;
+  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.4.3`;
   refreshSessionStats();
 }
 
@@ -3080,7 +3080,7 @@ function newSession() {
   localStorage.removeItem(KEYS.active);
   byId("farmInput").value = "";
   byId("mobInput").value = "";
-  byId("headerSubtitle").textContent = "Private lameness recording · 2.4.2";
+  byId("headerSubtitle").textContent = "Private lameness recording · 2.4.3";
   byId("lastSaved").textContent = "No cows saved this session.";
   clearCowForm(false);
   showScreen("startScreen");
@@ -3099,8 +3099,25 @@ document.querySelectorAll('[data-group="lesion"] button').forEach(button => {
 
     const detail = ensureActiveHoofDetail();
     detail.lesion = button.dataset.value;
+
+    // Footrot workflow: automatically add Antibiotic to this hoof.
+    // It remains manually deselectable if required.
+    const antibioticAdded =
+      detail.lesion === "Footrot" &&
+      !detail.treatment.includes("Antibiotic");
+
+    if (antibioticAdded) {
+      detail.treatment = [...detail.treatment, "Antibiotic"];
+    }
+
     setSingleChoice("lesion", detail.lesion);
+    setMultiChoice("treatment", detail.treatment);
     renderHoofAssignments();
+    updateMedicinePanels();
+
+    if (antibioticAdded) {
+      showToast("Antibiotic added for Footrot");
+    }
   });
 });
 
