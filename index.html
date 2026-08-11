@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#5c4b3a" />
-  <title>Hoof Records 2.4.3</title>
+  <title>Hoof Records 2.4.4</title>
   <style>:root {
   /* Vetlife V2.8 colour theme */
   --light-brown: #a79075;
@@ -788,6 +788,13 @@ select {
 .medicine-details h3 { margin: 0 0 12px; }
 .medicine-details input { min-height: 56px; margin: 10px 0 0; padding: 12px 14px; }
 .withhold-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; }
+.medicine-dose-field {
+  margin-top: 14px;
+}
+.medicine-dose-field input {
+  margin: 0;
+}
+
 .unit-input { display: grid; grid-template-columns: minmax(0,1fr) 110px; gap: 8px; }
 .unit-input input { margin: 0; }
 .outcome-grid { grid-template-columns: repeat(3,1fr); }
@@ -1233,7 +1240,7 @@ textarea {
         <div class="brand-mark">HR</div>
         <div>
           <h1>Hoof Records</h1>
-          <p id="headerSubtitle">Private lameness recording · 2.4.3</p>
+          <p id="headerSubtitle">Private lameness recording · 2.4.4</p>
         </div>
       </div>
 
@@ -1380,6 +1387,16 @@ textarea {
                 </select>
                 <input id="nsaidOtherDrug" class="hidden" type="text" placeholder="Other NSAID name">
 
+                <div class="medicine-dose-field">
+                  <label for="nsaidDoseMl">Dose given</label>
+                  <div class="unit-input">
+                    <input id="nsaidDoseMl" type="number" inputmode="decimal" min="0" step="0.1" placeholder="0">
+                    <select aria-label="NSAID dose unit" disabled>
+                      <option>mL</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div class="withhold-grid">
                   <div>
                     <label for="nsaidMilkWhp">Milk withholding</label>
@@ -1415,6 +1432,16 @@ textarea {
                 </select>
                 <input id="antibioticOtherDrug" class="hidden" type="text" placeholder="Other antibiotic name">
 
+                <div class="medicine-dose-field">
+                  <label for="antibioticDoseMl">Dose given</label>
+                  <div class="unit-input">
+                    <input id="antibioticDoseMl" type="number" inputmode="decimal" min="0" step="0.1" placeholder="0">
+                    <select aria-label="Antibiotic dose unit" disabled>
+                      <option>mL</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div class="withhold-grid">
                   <div>
                     <label for="antibioticMilkWhp">Milk withholding</label>
@@ -1438,6 +1465,20 @@ textarea {
                   </div>
                 </div>
               </div>
+
+              <div id="localAnaestheticDetails" class="medicine-details hidden">
+                <h3>Local anaesthetic details</h3>
+                <div class="medicine-dose-field">
+                  <label for="localAnaestheticDoseMl">Dose given</label>
+                  <div class="unit-input">
+                    <input id="localAnaestheticDoseMl" type="number" inputmode="decimal" min="0" step="0.1" placeholder="0">
+                    <select aria-label="Local anaesthetic dose unit" disabled>
+                      <option>mL</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
               <p class="withholding-note">
                 Withholding periods auto-fill for Metacam, Key 10%, Intra 300, and Depocillin. They can still be changed manually.
               </p>
@@ -1592,7 +1633,7 @@ textarea {
     </nav>
   </div>
 
-  <script>const APP_VERSION = "2.4.3";
+  <script>const APP_VERSION = "2.4.4";
 
 const KEYS = {
   records: "hoofRecordsV2Records",
@@ -1725,8 +1766,10 @@ function updateMedicinePanels() {
   const activeTreatments = uniqueValues([...assignedTreatmentArray(), ...state.treatment]);
   const nsaid = activeTreatments.includes("NSAID");
   const antibiotic = activeTreatments.includes("Antibiotic");
+  const nerveBlock = activeTreatments.includes("Nerve");
   byId("nsaidDetails").classList.toggle("hidden", !nsaid);
   byId("antibioticDetails").classList.toggle("hidden", !antibiotic);
+  byId("localAnaestheticDetails").classList.toggle("hidden", !nerveBlock);
 }
 
 function chosenDrug(prefix) {
@@ -1746,8 +1789,15 @@ function clearMedicine(prefix) {
 
 function medicineText(r) {
   const bits = [];
-  if (r.nsaidDrug) bits.push(r.nsaidDrug);
-  if (r.antibioticDrug) bits.push(r.antibioticDrug);
+  if (r.nsaidDrug) {
+    bits.push(`${r.nsaidDrug}${r.nsaidDoseMl ? ` ${r.nsaidDoseMl} mL` : ""}`);
+  }
+  if (r.antibioticDrug) {
+    bits.push(`${r.antibioticDrug}${r.antibioticDoseMl ? ` ${r.antibioticDoseMl} mL` : ""}`);
+  }
+  if (r.localAnaestheticDoseMl) {
+    bits.push(`Local anaesthetic ${r.localAnaestheticDoseMl} mL`);
+  }
   return bits.join(" + ");
 }
 
@@ -1939,7 +1989,7 @@ function updateSessionHeader() {
     state.activeSession.operator || "No operator"
   ];
   byId("sessionMeta").textContent = bits.join(" · ");
-  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.4.3`;
+  byId("headerSubtitle").textContent = `${state.activeSession.farm}${state.activeSession.mob ? " · " + state.activeSession.mob : ""} · 2.4.4`;
   refreshSessionStats();
 }
 
@@ -1961,6 +2011,9 @@ function clearCowForm(focus = true) {
   setMultiChoice("outcome", []);
   clearMedicine("nsaid");
   clearMedicine("antibiotic");
+  byId("nsaidDoseMl").value = "";
+  byId("antibioticDoseMl").value = "";
+  byId("localAnaestheticDoseMl").value = "";
   updateMedicinePanels();
   renderHoofAssignments();
 
@@ -1998,8 +2051,20 @@ function saveCow() {
     showToast("Select or enter the NSAID drug.", true);
     return;
   }
+  if (allTreatments.includes("NSAID") && !byId("nsaidDoseMl").value) {
+    showToast("Enter the NSAID dose in mL.", true);
+    return;
+  }
   if (allTreatments.includes("Antibiotic") && !chosenDrug("antibiotic")) {
     showToast("Select or enter the antibiotic drug.", true);
+    return;
+  }
+  if (allTreatments.includes("Antibiotic") && !byId("antibioticDoseMl").value) {
+    showToast("Enter the antibiotic dose in mL.", true);
+    return;
+  }
+  if (allTreatments.includes("Nerve") && !byId("localAnaestheticDoseMl").value) {
+    showToast("Enter the local anaesthetic dose in mL.", true);
     return;
   }
 
@@ -2017,17 +2082,20 @@ function saveCow() {
     hoofDetails,
     lesion: uniqueValues(hoofDetails.map(detail => detail.lesion)).join(" + "),
     treatment: allTreatments,
+    nsaidDoseMl: allTreatments.includes("NSAID") ? byId("nsaidDoseMl").value : "",
     nsaidDrug: allTreatments.includes("NSAID") ? chosenDrug("nsaid") : "",
     nsaidMilkWhp: allTreatments.includes("NSAID") ? byId("nsaidMilkWhp").value : "",
     nsaidMilkUnit: allTreatments.includes("NSAID") ? byId("nsaidMilkUnit").value : "",
     nsaidMeatWhp: allTreatments.includes("NSAID") ? byId("nsaidMeatWhp").value : "",
     nsaidMeatUnit: allTreatments.includes("NSAID") ? byId("nsaidMeatUnit").value : "",
+    antibioticDoseMl: allTreatments.includes("Antibiotic") ? byId("antibioticDoseMl").value : "",
     antibioticDrug: allTreatments.includes("Antibiotic") ? chosenDrug("antibiotic") : "",
     antibioticMilkWhp: allTreatments.includes("Antibiotic") ? byId("antibioticMilkWhp").value : "",
     antibioticMilkUnit: allTreatments.includes("Antibiotic") ? byId("antibioticMilkUnit").value : "",
     antibioticMeatWhp: allTreatments.includes("Antibiotic") ? byId("antibioticMeatWhp").value : "",
     antibioticMeatUnit: allTreatments.includes("Antibiotic") ? byId("antibioticMeatUnit").value : "",
     outcome: [...state.outcome],
+    localAnaestheticDoseMl: allTreatments.includes("Nerve") ? byId("localAnaestheticDoseMl").value : "",
     notes: byId("notes").value.trim()
   };
 
@@ -2074,6 +2142,7 @@ function repeatLastTreatment() {
     byId("nsaidDrug").value = known ? last.nsaidDrug : (last.nsaidDrug ? "Other" : "");
     byId("nsaidOtherDrug").value = known ? "" : (last.nsaidDrug || "");
     byId("nsaidOtherDrug").classList.toggle("hidden", known || !last.nsaidDrug);
+    byId("nsaidDoseMl").value = last.nsaidDoseMl || "";
     byId("nsaidMilkWhp").value = last.nsaidMilkWhp || "";
     byId("nsaidMilkUnit").value = last.nsaidMilkUnit || "hours";
     byId("nsaidMeatWhp").value = last.nsaidMeatWhp || "";
@@ -2085,12 +2154,14 @@ function repeatLastTreatment() {
     byId("antibioticDrug").value = known ? last.antibioticDrug : (last.antibioticDrug ? "Other" : "");
     byId("antibioticOtherDrug").value = known ? "" : (last.antibioticDrug || "");
     byId("antibioticOtherDrug").classList.toggle("hidden", known || !last.antibioticDrug);
+    byId("antibioticDoseMl").value = last.antibioticDoseMl || "";
     byId("antibioticMilkWhp").value = last.antibioticMilkWhp || "";
     byId("antibioticMilkUnit").value = last.antibioticMilkUnit || "hours";
     byId("antibioticMeatWhp").value = last.antibioticMeatWhp || "";
     byId("antibioticMeatUnit").value = last.antibioticMeatUnit || "days";
   }
 
+  byId("localAnaestheticDoseMl").value = last.localAnaestheticDoseMl || "";
   showToast("Last treatment details copied");
 }
 
@@ -2693,12 +2764,17 @@ function buildFarmerReportPdfBlob() {
   records.forEach(record => {
     if (record.nsaidDrug) {
       medicines.push(
-        `Cow ${record.cow} | NSAID: ${record.nsaidDrug} | Milk WHP: ${formatWithholding(record.nsaidMilkWhp, record.nsaidMilkUnit)} | Meat WHP: ${formatWithholding(record.nsaidMeatWhp, record.nsaidMeatUnit)}`
+        `Cow ${record.cow} | NSAID: ${record.nsaidDrug} | Dose: ${record.nsaidDoseMl || "-"} mL | Milk WHP: ${formatWithholding(record.nsaidMilkWhp, record.nsaidMilkUnit)} | Meat WHP: ${formatWithholding(record.nsaidMeatWhp, record.nsaidMeatUnit)}`
       );
     }
     if (record.antibioticDrug) {
       medicines.push(
-        `Cow ${record.cow} | Antibiotic: ${record.antibioticDrug} | Milk WHP: ${formatWithholding(record.antibioticMilkWhp, record.antibioticMilkUnit)} | Meat WHP: ${formatWithholding(record.antibioticMeatWhp, record.antibioticMeatUnit)}`
+        `Cow ${record.cow} | Antibiotic: ${record.antibioticDrug} | Dose: ${record.antibioticDoseMl || "-"} mL | Milk WHP: ${formatWithholding(record.antibioticMilkWhp, record.antibioticMilkUnit)} | Meat WHP: ${formatWithholding(record.antibioticMeatWhp, record.antibioticMeatUnit)}`
+      );
+    }
+    if (record.localAnaestheticDoseMl) {
+      medicines.push(
+        `Cow ${record.cow} | Local anaesthetic for nerve block: ${record.localAnaestheticDoseMl} mL`
       );
     }
   });
@@ -3007,17 +3083,17 @@ function exportRecords(records, filename) {
   const headers = [
     "Date", "Time", "Farm", "Mob", "Operator",
     "Cow Number", "Severity", "Hoof/Hooves", "Hoof Details", "Lesion", "Treatment",
-    "NSAID Drug", "NSAID Milk WHP", "NSAID Milk Unit", "NSAID Meat WHP", "NSAID Meat Unit",
-    "Antibiotic Drug", "Antibiotic Milk WHP", "Antibiotic Milk Unit", "Antibiotic Meat WHP", "Antibiotic Meat Unit",
-    "Outcome(s)", "Notes"
+    "NSAID Drug", "NSAID Dose mL", "NSAID Milk WHP", "NSAID Milk Unit", "NSAID Meat WHP", "NSAID Meat Unit",
+    "Antibiotic Drug", "Antibiotic Dose mL", "Antibiotic Milk WHP", "Antibiotic Milk Unit", "Antibiotic Meat WHP", "Antibiotic Meat Unit",
+    "Local Anaesthetic Dose mL", "Outcome(s)", "Notes"
   ];
 
   const rows = records.map(r => [
     r.date, r.time, r.farm, r.mob, r.operator,
     r.cow, r.severity, footText(r), hoofDetailsText(r), r.lesion, (r.treatment || []).join(" + "),
-    r.nsaidDrug || "", r.nsaidMilkWhp || "", r.nsaidMilkUnit || "", r.nsaidMeatWhp || "", r.nsaidMeatUnit || "",
-    r.antibioticDrug || "", r.antibioticMilkWhp || "", r.antibioticMilkUnit || "", r.antibioticMeatWhp || "", r.antibioticMeatUnit || "",
-    (Array.isArray(r.outcome) ? r.outcome : (r.outcome ? [r.outcome] : [])).join(" + "), r.notes
+    r.nsaidDrug || "", r.nsaidDoseMl || "", r.nsaidMilkWhp || "", r.nsaidMilkUnit || "", r.nsaidMeatWhp || "", r.nsaidMeatUnit || "",
+    r.antibioticDrug || "", r.antibioticDoseMl || "", r.antibioticMilkWhp || "", r.antibioticMilkUnit || "", r.antibioticMeatWhp || "", r.antibioticMeatUnit || "",
+    r.localAnaestheticDoseMl || "", (Array.isArray(r.outcome) ? r.outcome : (r.outcome ? [r.outcome] : [])).join(" + "), r.notes
   ]);
 
   const escapeCsv = value => `"${String(value ?? "").replace(/"/g, '""')}"`;
@@ -3080,7 +3156,7 @@ function newSession() {
   localStorage.removeItem(KEYS.active);
   byId("farmInput").value = "";
   byId("mobInput").value = "";
-  byId("headerSubtitle").textContent = "Private lameness recording · 2.4.3";
+  byId("headerSubtitle").textContent = "Private lameness recording · 2.4.4";
   byId("lastSaved").textContent = "No cows saved this session.";
   clearCowForm(false);
   showScreen("startScreen");
