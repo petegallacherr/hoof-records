@@ -1,17 +1,20 @@
-HOOF RECORDS 2.4.5 — VETLIFE LOGO ON FARMER REPORT
+HOOF RECORDS 2.4.6 — RESEND FARMER REPORT FROM HISTORY
 
 New:
-- Adds the uploaded Vetlife logo to the top left of the Farmer Report header.
-- The logo appears on the printable Farmer Report preview.
-- The logo is also embedded in the Email / Share Farmer Report PDF.
+- History now includes a Previous sessions section.
+- Each saved session shows farm, date, mob, and cow count.
+- Each session has a Resend Farmer Report button.
+- Tapping Resend Farmer Report rebuilds that exact saved session report.
+- The existing Share workflow opens Outlook, Gmail, Mail, etc. with the PDF attached where supported.
+- Historical sessions are not reopened or edited.
 
 Retained:
+- Vetlife logo on Farmer Reports.
 - Medicine dose (mL) recording.
 - Footrot automatically selects Antibiotic.
 - Independent hoof tabs.
 - Cow number Next/Enter moves to Hoof tabs.
 - Portrait-only phone workflow.
-- Email / Share Farmer Report.
 - No weather / conditions.
 
 UPLOAD
