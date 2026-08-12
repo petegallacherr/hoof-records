@@ -1,15 +1,15 @@
-HOOF RECORDS 2.4.11 — MEDICINE TABLE MOVED HIGHER IN REPORT
+HOOF RECORDS 2.4.13 — VIEW PREVIOUS SESSIONS FROM START SCREEN
 
-CHANGE
-- Medicines and withholding periods now appear near the top of the Farmer Report.
-- The table sits directly below the session summary cards and above Lesion breakdown.
-- The same order is used in the Email / Share Farmer Report PDF.
+NEW
+- Added a "View previous sessions" button to the Start screen.
+- You can now open History without starting a new session.
+- The existing Back button on History returns to the Start screen when there is no active session.
+- Previous-session Farmer Reports, cow records, photos, Vet Reference sharing and CSV export remain available exactly as before.
 
 RETAINED
-- Animal-by-animal medicine table:
-  Cow | Treatment | Medicine | Dose | Milk WHP | Meat WHP.
-- Cow number keypad Next fix.
-- Farmer Report visual refresh.
+- Matching Farmer Report PDF styling.
+- Medicine / withholding table near the top of the report.
+- Cow-number keypad Next fix.
 - Cow photos + Share with Vet.
 - Previous sessions + Resend Farmer Report.
 - Vetlife branding.
@@ -20,4 +20,4 @@ RETAINED
 
 UPLOAD
 Upload every file in this ZIP directly into the root of the GitHub repository and replace the existing files.
-After uploading, fully close and reopen the installed PWA so the updated service-worker cache loads.
+After uploading, fully close and reopen the installed PWA so the 2.4.13 service-worker cache loads.
