@@ -1,20 +1,14 @@
-HOOF RECORDS 2.4.10 — COW NUMBER KEYPAD NEXT FIX
+HOOF RECORDS 2.4.11 — MEDICINE TABLE MOVED HIGHER IN REPORT
 
-FIXED
-- Phone/tablet keypad Next after entering the cow number no longer jumps to Notes.
-- The keypad action now closes the numeric keyboard and moves the screen to Hoof selection.
-- No hoof is automatically selected.
-- A deliberate tap on Notes still works normally.
-
-TECHNICAL
-- Retains enterkeyhint="next".
-- Handles normal Enter/Return keyboard events.
-- Adds a hidden native focus-navigation target immediately after Cow number.
-- Adds a fallback that catches mobile browsers which skip the hidden target and focus Notes directly.
-- Service-worker cache bumped to 2.4.10.
+CHANGE
+- Medicines and withholding periods now appear near the top of the Farmer Report.
+- The table sits directly below the session summary cards and above Lesion breakdown.
+- The same order is used in the Email / Share Farmer Report PDF.
 
 RETAINED
-- Medicine / withholding animal-by-animal table.
+- Animal-by-animal medicine table:
+  Cow | Treatment | Medicine | Dose | Milk WHP | Meat WHP.
+- Cow number keypad Next fix.
 - Farmer Report visual refresh.
 - Cow photos + Share with Vet.
 - Previous sessions + Resend Farmer Report.
@@ -26,4 +20,4 @@ RETAINED
 
 UPLOAD
 Upload every file in this ZIP directly into the root of the GitHub repository and replace the existing files.
-After uploading, fully close and reopen the installed PWA so the new service-worker version loads.
+After uploading, fully close and reopen the installed PWA so the updated service-worker cache loads.
