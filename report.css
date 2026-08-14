@@ -1,0 +1,39 @@
+:root { --light-brown:#a79075; --dark-brown:#5c4b3a; --brown-deep:#42352a; --warm:#f6f2ed; --line:#d8cfc5; --text:#302820; --muted:#74685d; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#e8e2db; color:var(--text); font-family:Arial,Helvetica,sans-serif; line-height:1.42; }
+  .toolbar { position:sticky; top:0; z-index:10; display:flex; justify-content:center; gap:10px; padding:12px; background:rgba(48,40,32,.94); }
+  .toolbar button { border:0; border-radius:10px; padding:11px 18px; font-size:14px; font-weight:700; cursor:pointer; }
+  .print-btn { background:var(--light-brown); color:white; } .close-btn { background:white; color:var(--dark-brown); }
+  .page { width:min(210mm,calc(100% - 28px)); min-height:297mm; margin:22px auto; padding:0; overflow:hidden; background:white; border-radius:14px; box-shadow:0 18px 50px rgba(50,40,30,.18); }
+  .report-header { position:relative; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:24px; align-items:start; padding:18mm 17mm 14mm; background:linear-gradient(135deg,#fbf9f6 0%,#f2ece5 100%); border-bottom:6px solid var(--dark-brown); }
+  .report-header::before { content:""; position:absolute; left:0; top:0; width:8mm; height:100%; background:var(--light-brown); }
+  .brand { display:flex; align-items:flex-start; gap:18px; }
+  .vetlife-report-logo { display:block; width:170px; max-width:36vw; height:auto; object-fit:contain; }
+  .report-title-block { padding-top:2px; }
+  h1 { margin:0; color:var(--brown-deep); font-size:27px; line-height:1.08; letter-spacing:-.02em; }
+  .subtitle { margin:7px 0 0; color:var(--muted); font-size:13px; }
+  .report-meta { min-width:155px; padding:11px 13px; border:1px solid var(--line); border-radius:10px; background:rgba(255,255,255,.72); color:var(--muted); text-align:right; font-size:11px; line-height:1.65; }
+  .report-body { padding:12mm 17mm 15mm; }
+  .details { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px; margin:0 0 16px; overflow:hidden; border:1px solid var(--line); border-radius:11px; background:var(--line); }
+  .detail { min-height:66px; padding:11px 13px; background:var(--warm); }
+  .detail span,.metric span { display:block; color:var(--muted); font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+  .detail strong { display:block; margin-top:5px; color:var(--brown-deep); font-size:14px; }
+  .metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; margin-bottom:21px; }
+  .metric { min-height:84px; padding:13px; border-radius:11px; background:var(--dark-brown); color:white; }
+  .metric:nth-child(2){background:#6b5947}.metric:nth-child(3){background:#7a6651}.metric:nth-child(4){background:var(--light-brown)}
+  .metric span { color:rgba(255,255,255,.74); } .metric strong { display:block; margin-top:8px; font-size:25px; line-height:1; }
+  h2 { margin:24px 0 10px; padding:0; border:0; color:var(--dark-brown); font-size:17px; }
+  .section-title { display:flex; align-items:center; gap:10px; margin:24px 0 10px; color:var(--dark-brown); font-size:17px; font-weight:800; }
+  .section-title::before { content:""; width:5px; height:22px; border-radius:4px; background:var(--light-brown); }
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+  .report-card { padding:13px; border:1px solid var(--line); border-radius:11px; background:#fff; } .report-card h2 { margin-top:0; }
+  table { width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border:1px solid var(--line); border-radius:9px; font-size:10.5px; }
+  th { padding:8px 7px; background:var(--dark-brown); color:white; text-align:left; font-size:10px; letter-spacing:.02em; }
+  td { padding:7px; border-bottom:1px solid #e7dfd6; vertical-align:top; } tbody tr:nth-child(even){background:#faf8f5} tbody tr:last-child td{border-bottom:0}
+  .number { width:58px; text-align:center; font-weight:700; } .empty { color:var(--muted); font-style:italic; text-align:center; }
+  .follow-up-section table th{background:#6f5843}.medicine-section table th{background:#78644f}.medicine-section .section-help{margin:-4px 0 10px;color:var(--muted);font-size:10.5px}.medicine-section td:first-child{font-weight:800;color:var(--dark-brown)}.medicine-section td:nth-child(2){font-weight:700}.complete-section table th{background:#4f4033}
+  .note { margin-top:22px; padding:13px 15px; border:1px solid #ddd1c3; border-left:6px solid var(--light-brown); border-radius:9px; background:var(--warm); color:var(--muted); font-size:10.5px; line-height:1.5; }
+  .footer { margin-top:22px; padding-top:10px; border-top:1px solid var(--line); color:var(--muted); font-size:9.5px; text-align:center; }
+  .avoid-break { break-inside:avoid; }
+  @media(max-width:760px){ .page{width:100%;margin:0;border-radius:0;box-shadow:none}.report-header{grid-template-columns:1fr;padding:24px 20px 20px 28px}.report-meta{text-align:left}.report-body{padding:18px}.details,.metrics,.two-col{grid-template-columns:1fr 1fr}.brand{flex-direction:column;gap:12px}.vetlife-report-logo{width:150px} }
+  @media print { @page{size:A4;margin:9mm} body{background:white}.toolbar{display:none!important}.page{width:auto;min-height:auto;margin:0;padding:0;border-radius:0;box-shadow:none}.report-header{padding:10mm 10mm 8mm 14mm}.report-body{padding:8mm 10mm 10mm} h2,.section-title{break-after:avoid} table{break-inside:auto} tr{break-inside:avoid;break-after:auto} }

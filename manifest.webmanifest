@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Hoof Records",
   "short_name": "Hoof Records",
-  "description": "Offline hoof-trimming and lameness session records.",
+  "description": "Offline hoof-trimming and lameness session records with Farmer Reports and local photo references.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
